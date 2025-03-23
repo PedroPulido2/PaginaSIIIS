@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.profile-image-edit {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.profile-image-edit svg {
+  margin: 0 auto;
+}
+
+.profile-image figure:hover .profile-image-edit {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ========= transición texto ============== */
+div#info {
+  position:absolute;
+  overflow:hidden;
+  background-color: #1f2937;
+  opacity:0;
+  transition: opacity 0.3s;
+}
+
+div#imagen:hover div#info {
+  opacity:1;
+}
+
+p#headline {
+  font-size: 1.5rem;
+  margin-top: 15px;
+  margin-right: 15px;
+  transition: margin-left 0.3s;
+}
+
+div#imagen:hover p#headline {
+  margin-left: 15px;
+}
+
+p#descripcion {
+  text-align: center;
+  transition: margin-top 0.4s;
+}
+
+div#imagen:hover p#descripcion {
+  margin-top: 15px;
+}
+/* ========= fin texto ============== */
