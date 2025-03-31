@@ -6,8 +6,8 @@ export const FormValidate = () => {
 			message: "Este campo es requerido",
 		},
 		patternEmail: {
-			value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-			message: "El email no es válido",
+			value: /^[A-Z0-9._%+-]+@uptc\.edu\.co$/i,
+			message: "El email no es válido. Recuerda que debes registrarte con el correo institucional",
 		},
 		setValues: (value) => value.trim(),
 		patternPassword: {
