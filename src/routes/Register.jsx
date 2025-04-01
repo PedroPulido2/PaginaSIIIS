@@ -89,7 +89,7 @@ const Register = () => {
 						error={errors.email}
 						{...register("email", {
 							required,
-							pattern: patternEmail,
+							pattern: patternEmailRegister,
 						})}
 					>
 						<FormErrors error={errors.email} />
