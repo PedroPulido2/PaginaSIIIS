@@ -19,7 +19,7 @@ const Register = () => {
 	// validate form with react-hook-form
 	const {
 		required,
-		patternEmail,
+		patternEmailRegister,
 		patternPassword,
 		validateEmptyField,
 		validateEqualsPasswords,
