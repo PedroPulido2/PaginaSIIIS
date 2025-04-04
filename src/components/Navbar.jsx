@@ -63,7 +63,7 @@ const Navbar = () => {
 
   // render navbar
   return (
-    <Disclosure as="nav" className="fixed w-full z-30 top-0 bg-gray-800">
+    <Disclosure as="nav" className="w-full z-30 top-0 bg-gray-800">
       {({ open }) => (
         <>
           <div className="max-w-full mx-auto px-2 sm:px-6 lg:px-6">
