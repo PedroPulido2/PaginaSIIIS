@@ -9,6 +9,7 @@ import {useFirestore} from "../hooks/useFirestore";
 
 const storage = getStorage(firebaseApp);
 
+
 // page principale
 const Home = () => {
   const [images, setImages] = useState([]);
@@ -187,7 +188,7 @@ const Home = () => {
         {/* -------------------------------------------------------------------------------------------------------------------- */}
         <div className="flex justify-center gap-4 p-4">
           <div
-              className="bg-[#F7D467] hover:bg-[#F5BC4A] border-2 border-[#947646] rounded-lg p-4 w-72 h-80 shadow-md flex flex-col items-center transition-colors duration-300 group space-y-4">
+            className="bg-[#F7D467] hover:bg-[#F5BC4A] border-2 border-[#947646] rounded-lg p-4 w-72 h-80 shadow-md flex flex-col items-center transition-colors duration-300 group space-y-4">
             <h2 className="text-8xl font-bold text-[#7C501C] group-hover:text-[#5A3210] transition-colors duration-300">
               S
             </h2>
@@ -195,7 +196,19 @@ const Home = () => {
               emillero
             </p>
           </div>
+
+          <div
+            className="bg-[#F7D467] hover:bg-[#F5BC4A] border-2 border-[#947646] rounded-lg p-4 w-72 h-80 shadow-md flex flex-col items-center transition-colors duration-300 group space-y-4">
+            <h2 className="text-8xl font-bold text-[#7C501C] group-hover:text-[#5A3210] transition-colors duration-300">
+              I
+            </h2>
+            <p className="text-2xl text-[#947646] group-hover:text-[#5A3210] transition-colors duration-300">
+              nvestigación
+            </p>
+          </div>
         </div>
+
+
 
         <section className="pb-20 mt-6">
           <div className="container mx-auto px-4">
