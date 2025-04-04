@@ -3,7 +3,6 @@ import {useState, useEffect} from "react";
 import {Carousel} from "flowbite-react";
 import firebaseApp from "../Firebase";
 import {getStorage, ref, listAll, getDownloadURL, deleteObject, uploadBytes} from "firebase/storage";
-import Mision_Vision from "../components/Mision_Vision";
 import Contact_Us from "../components/ContactUs";
 import Reviews from "../components/Reviews";
 import {useFirestore} from "../hooks/useFirestore";
@@ -320,12 +319,8 @@ const Home = () => {
           <div className="w-full mb-5">
             <div className="h-1 mx-auto bg-white w-1/6 opacity-25  rounded-t"/>
           </div>
-          <h3 className=" text-slate-700 text-3xl leading-tight font-semibold">
-            Semillero de Investigación e Innovación en Ingeniería de
-            Sistemas. (SIIIS)
-          </h3>
+
         </section>
-        <Mision_Vision/>
 
         <Reviews/>
 
