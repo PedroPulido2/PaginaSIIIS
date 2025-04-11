@@ -30,15 +30,16 @@ const Comments = ({ fucntionComent, comment }) => {
 
   // useState hook
   const handleSubmitReview = async (data) => {
-    const dataNew = {
-      ...data,
-      userUID: user.uid,
-    };
+
     try {
       if (fucntionComent === "Crear") {
+        const dataNew = {
+          ...data,
+          userUID: user.uid,
+        };
         await addDataReview(dataNew);
       } else {
-        await updateDataReview(dataNew);
+        await updateDataReview(data);
       }
       window.location.href = "/";
     } catch (error) {
