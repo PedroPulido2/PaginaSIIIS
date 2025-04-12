@@ -145,6 +145,26 @@ const Reviews = () => {
                         </h6>
                       </div>
                     </div>
+
+                    {/* Agregar Fecha de creacion de comentario*/}
+                    {review.createdAt && (
+                      <div className="text-right text-xs text-gray-400">
+                        {new Date(
+                          review.createdAt.seconds
+                            ? review.createdAt.seconds * 1000
+                            : review.createdAt
+                        ).toLocaleDateString("es-CO", {
+                          day: "2-digit",
+                          month: "long",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </div>
+                    )}
+                    {/* Agregar Fecha de creacion de comentario*/}
+
+                    
                     <div className="w-full">
                       <p className="text-sm leading-tight">
                         <span className="text-lg leading-none italic font-bold text-gray-400 mr-1">
