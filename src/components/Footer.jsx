@@ -48,7 +48,7 @@ const Footer = () => {
             <div>
               <h4 className="text-lg font-bold mb-4">Grupo de investigación</h4>
               <a
-                href="#"
+                href="https://www.grupogalash.com/"
                 className="text-blue-500 hover:text-blue-700"
               >
                 GALASH

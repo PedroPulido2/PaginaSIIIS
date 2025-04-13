@@ -13,12 +13,14 @@ import {useFirestore} from "../hooks/useFirestore";
 const navigation = [
   {name: "INICIO", href: "/", current: true},
   {name: "ACERCA DE", href: "/AboutUs", current: false},
-  {name: "PROYECTOS", href: "/users", current: false},
+  {name: "USUARIOS", href: "/users", current: false},
+  {name: "PROYECTOS", href: "/article", current: false},
   {
     name: "BLOG",
     href: "https://semillerosiiis.blogspot.com/",
     current: false,
   },
+  
   {name: "CONTACTO", href: "/Contact", current: false},
   {name: "Login", href: "/login", current: false},
 ];

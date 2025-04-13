@@ -190,81 +190,121 @@ const Home = () => {
       </div>
 
       <section className="pb-20 mt-6">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap items-center">
-            {/* Video */}
-            <div className="w-full md:w-1/2 px-4">
-              <div className="shadow-lg rounded-lg overflow-hidden">
-                <video className="w-full h-full object-cover" controls>
-                  <source
-                    src="https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/videos%2Fvideo_home.mp4?alt=media&token=d4728384-b3cd-46fd-9b46-bc0f009bb91e"
-                    type="video/mp4"
-                  />
-                </video>
-              </div>
+        {/* Sección azul: Bienvenida centrada */}
+      <div className="w-screen bg-[#003366] text-white mt-10 relative px-10">
+        <div className="flex items-center justify-center p-6">
+          {/* Texto centrado */}
+          <div className="text-center max-w-3xl">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Todos los años son bienvenidos todos aquellos que deseen mejorar
+            </h2>
+            <p className="mb-4 text-sm md:text-base">
+              Sabemos lo difícil que es encajar en un ambiente nuevo como lo es la universidad,
+              por eso se ofrece este espacio, el cual es un grupo en el que conocerás nuevas personas y nuevas maneras de pensar.
+            </p>
+            <a
+              href="/AboutUs"
+              className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300"
+            >
+              Ver más
+            </a>
+          </div>
+        </div>
+      </div>
+
+
+
+        {/* -------------------------------------------------------------------------------------------------------------------- */}
+        <div className="flex justify-center gap-4 p-4">
+        <div
+          className="bg-[#F7D467] hover:bg-[#F5BC4A] border-2 border-[#947646] rounded-lg p-4 w-72 h-80 shadow-md flex flex-col items-center transition-colors duration-300 group space-y-4">
+          <h2 className="text-8xl font-bold text-[#7C501C] group-hover:text-[#5A3210] transition-colors duration-300">
+            S
+          </h2>
+          <p className="text-2xl text-[#947646] group-hover:text-[#5A3210] transition-colors duration-300">
+            emillero
+          </p>
+          <img src="https://i.imgur.com/cR8iV6g.png" className="w-40 h-40 object-contain" />
+        </div>
+
+
+          <div
+            className="bg-[#F7D467] hover:bg-[#F5BC4A] border-2 border-[#947646] rounded-lg p-4 w-72 h-80 shadow-md flex flex-col items-center transition-colors duration-300 group space-y-4">
+            <h2 className="text-8xl font-bold text-[#7C501C] group-hover:text-[#5A3210] transition-colors duration-300">
+              I
+            </h2>
+            <p className="text-2xl text-[#947646] group-hover:text-[#5A3210] transition-colors duration-300">
+              nvestigación
+            </p>
+            <img src="https://i.imgur.com/eMIinFD.png" className="w-25 h-25 object-contain" />
+          </div>
+
+          <div
+            className="bg-[#F7D467] hover:bg-[#F5BC4A] border-2 border-[#947646] rounded-lg p-4 w-72 h-80 shadow-md flex flex-col items-center transition-colors duration-300 group space-y-4">
+            <h2 className="text-8xl font-bold text-[#7C501C] group-hover:text-[#5A3210] transition-colors duration-300">
+              I
+            </h2>
+            <p className="text-2xl text-[#947646] group-hover:text-[#5A3210] transition-colors duration-300">
+              nnovación
+            </p>
+            <img src="https://i.imgur.com/VQPRV1y.png" alt="Innovación" className="max-w-[120px] max-h-[120px] object-contain" />
+          </div>
+
+          <div
+            className="bg-[#F7D467] hover:bg-[#F5BC4A] border-2 border-[#947646] rounded-lg p-4 w-72 h-80 shadow-md flex flex-col items-center transition-colors duration-300 group space-y-4">
+            <h2 className="text-8xl font-bold text-[#7C501C] group-hover:text-[#5A3210] transition-colors duration-300">
+              I
+            </h2>
+            <p className="text-2xl text-[#947646] group-hover:text-[#5A3210] transition-colors duration-300">
+              ngenieria
+            </p>
+            <img src="https://i.imgur.com/Fio9MvZ.png" alt="Ingeniería" className="max-w-[120px] max-h-[120px] object-contain" />
             </div>
 
-            {/* Texto */}
-            <div className="w-full md:w-1/2 px-4 mt-10 md:mt-0">
-              <div className="bg-white rounded-xl shadow-lg p-8">
-                <div className="text-yellow-500 text-4xl font-bold mb-4 leading-tight">
-                  Todos los años son bienvenidos todos aquellos que deseen mejorar
-                </div>
-                <p className="text-gray-700 text-base mb-4">
-                  Sabemos lo difícil que es encajar en un ambiente nuevo como lo es la universidad,
-                  por eso se ofrece este espacio, el cual es un grupo en el que conocerás nuevas personas y nuevas maneras de pensar.
-                </p>
-                <p className="text-gray-700 text-base mb-6">
-                  ¿Quieres saber más acerca de nosotros?
-                </p>
-                <a
-                  href="/AboutUs"
-                  className="inline-block bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-3 px-6 rounded-full transition-colors duration-300"
-                >
-                  Más información!
-                </a>
-              </div>
-            </div>
+          <div
+            className="bg-[#F7D467] hover:bg-[#F5BC4A] border-2 border-[#947646] rounded-lg p-4 w-72 h-80 shadow-md flex flex-col items-center transition-colors duration-300 group space-y-4">
+            <h2 className="text-8xl font-bold text-[#7C501C] group-hover:text-[#5A3210] transition-colors duration-300">
+              S
+            </h2>
+            <p className="text-2xl text-[#947646] group-hover:text-[#5A3210] transition-colors duration-300">
+              istemas
+            </p>
+            <img src="https://i.imgur.com/uRRGblH.png" alt="Sistemas" className="max-w-[120px] max-h-[120px] object-contain" />
           </div>
         </div>
 
+        
         {/* Sección azul: Conoce nuestros proyectos */}
-        <div className="w-screen bg-[#003366] text-white mt-10 relative px-10">
-          <div className="flex items-center justify-between p-6">
-            {/* Texto */}
-            <div className="flex-1">
+        <div className="bg-[#003366] text-white rounded-xl mt-10 flex flex-col md:flex-row overflow-hidden border-2 border-blue-300">
+          
+          {/* Contenedor de texto centrado verticalmente */}
+          <div className="flex-1 flex items-center p-6">
+            <div>
               <h2 className="text-2xl md:text-3xl font-bold mb-2">Conoce nuestros proyectos</h2>
               <p className="mb-4 text-sm md:text-base">
                 Con nosotros podrás sacar adelante ese proyecto que más te gusta
               </p>
               <a
-                href="/users"
+                href="/article"
                 className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300"
               >
                 Ver más
               </a>
             </div>
+          </div>
 
-            {/* Carrusel de imágenes en la zona derecha */}
-            <div className="w-1/2 pl-6">
-              <div id="carouselExample" className="relative" data-te-carousel-init>
-                {/* Imágenes del carrusel */}
-                <div className="relative overflow-hidden">
-                  <div className="flex transition-transform duration-700 ease-in-out" id="carouselImages">
-                    <img
-                      src="https://scontent.feyp2-1.fna.fbcdn.net/v/t39.30808-6/468388102_437557126077592_8986359712512938943_n.jpg?stp=dst-jpg_s720x720_tt6&_nc_cat=107&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeG5O_oCqJaz8mKGIyX4DHaIgr-FBY6fa22Cv4UFjp9rbW39marFU9WORBtiHv-B-cpaoEOUxW8IAe4RNhf8R4fk&_nc_ohc=HRT849bgkEIQ7kNvwHQcC46&_nc_oc=Adn-OiXWrQIPN6ixfJKOOVo6oxRL6x0rFEKkfBvF2KMEplYW_MK7MhmWcAUonu4aCJQ&_nc_zt=23&_nc_ht=scontent.feyp2-1.fna&_nc_gid=56EPfH5jhn5FLJaMLQSXeQ&oh=00_AfGwMInjbsyZYLU3xeOjEOrRTT7dCYl7YxxcuCLfLl0M2g&oe=680053A3"
-                      alt="Proyecto 1"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
-
-              </div>
-            </div>
+          {/* Imagen a la derecha */}
+          <div className="flex-1">
+            <img
+              src="https://scontent.feyp2-1.fna.fbcdn.net/v/t39.30808-6/468388102_437557126077592_8986359712512938943_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeG5O_oCqJaz8mKGIyX4DHaIgr-FBY6fa22Cv4UFjp9rbW39marFU9WORBtiHv-B-cpaoEOUxW8IAe4RNhf8R4fk&_nc_ohc=HRT849bgkEIQ7kNvwHQcC46&_nc_oc=Adn-OiXWrQIPN6ixfJKOOVo6oxRL6x0rFEKkfBvF2KMEplYW_MK7MhmWcAUonu4aCJQ&_nc_zt=23&_nc_ht=scontent.feyp2-1.fna&_nc_gid=teFEfm3vuvWMem3V-MGQnw&oh=00_AfEpjpL_TDnK3qkfU9RKV4crLZJbcJFFeBpbjrM5AbRQgA&oe=6800C423"
+              alt="Conoce nuestros proyectos"
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
 
-        <div className="w-full px-4 flex justify-center">
+
+      <div className="w-full px-4 flex justify-center">
         {/* Texto */}
         <div className="w-full px-4 mt-10">
           <div className="bg-white rounded-xl shadow-lg p-8 w-full">
@@ -283,7 +323,7 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="w-screen bg-[#003366] text-white mt-10 relative px-10">
+      <div className="w-full px-4 flex justify-center bg-[#003366] text-white mt-10 relative">
       <div className="flex items-center justify-center p-6">
         {/* Texto */}
         <div className="text-center">
@@ -301,24 +341,25 @@ const Home = () => {
     </div>
 
 
-        {/* Testimonios */}
-        <Reviews />
-        {/* Mapa de Google */}
-        <div className="w-full mt-10">
-          <div className="relative w-full h-[400px]">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3970.0613215180033!2d-72.94456112501372!3d5.704281294277565!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e6a45cb8472448f%3A0x63b776a002185d75!2sUniversidad%20Pedag%C3%B3gica%20y%20Tecnol%C3%B3gica%20de%20Colombia%20-%20Sede%20Sogamoso!5e0!3m2!1ses!2sco!4v1744476899737!5m2!1ses!2sco"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen=""
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            ></iframe>
-          </div>
+      {/* Testimonios */}
+      <Reviews />
+      {/* Mapa de Google */}
+      <div className="w-full mt-10">
+        <div className="relative w-full h-[400px]">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3970.0613215180033!2d-72.94456112501372!3d5.704281294277565!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e6a45cb8472448f%3A0x63b776a002185d75!2sUniversidad%20Pedag%C3%B3gica%20y%20Tecnol%C3%B3gica%20de%20Colombia%20-%20Sede%20Sogamoso!5e0!3m2!1ses!2sco!4v1744476899737!5m2!1ses!2sco"
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            allowFullScreen=""
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          ></iframe>
         </div>
-      </section>
-    </div>
+      </div>
+  </section>
+</div>
+
   );
 };
 
