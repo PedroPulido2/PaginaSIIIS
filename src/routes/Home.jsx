@@ -323,26 +323,28 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="w-full px-4 flex justify-center bg-[#003366] text-white mt-10 relative">
-      <div className="flex items-center justify-center p-6">
-        {/* Texto */}
-        <div className="text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">
-            ¡Estamos a un solo click de distancia de ti!
-          </h2>
-          <a
-            href="/Contact"
-            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300"
-          >
-            Contactar
-          </a>
-        </div>
-      </div>
-    </div>
-
-
       {/* Testimonios */}
       <Reviews />
+
+      <div className="w-full px-4 flex justify-center">
+        {/* Texto */}
+        <div className="w-full px-4 mt-10">
+          <div className="bg-white rounded-xl shadow-lg p-8 w-full">
+            <div className="text-yellow-500 text-4xl font-bold mb-4 leading-tight text-center">
+            ¡Estamos a un solo click de distancia de ti!
+            </div>
+            <div className="text-center">
+              <a
+                href="/Contact"
+                className="inline-block bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-3 px-6 rounded-full transition-colors duration-300"
+              >
+                Contactar
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       {/* Mapa de Google */}
       <div className="w-full mt-10">
         <div className="relative w-full h-[400px]">
