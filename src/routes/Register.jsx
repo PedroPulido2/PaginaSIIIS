@@ -71,16 +71,64 @@ const Register = () => {
 						alt="Workflow"
 					/>
 					<h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-						Registrate
+						Registro Usuario
 					</h2>
-					<p className="mt-2 text-center text-sm text-gray-600">
-						O{" "}
-						<NavLink to="/login">
-							<span className="font-medium text-amber-500 hover:text-amber-400">Iniciar sesión</span>
-						</NavLink>
-					</p>
 				</div>
 				<form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+					<FormInput
+						type="text"
+						placeholder=" "
+						label="Nombre"
+						htmlFor="name"
+						error={errors.name}
+						autoComplete="off"
+						{...register("name", {
+							required: "El nombre es obligatorio",
+							pattern: {
+								value: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/,
+								message: "El nombre solo puede contener letras y espacios",
+							},
+						})}
+					>
+						<FormErrors error={errors.name} />
+					</FormInput>
+
+					<FormInput
+						type="text"
+						placeholder=" "
+						label="Apellidos"
+						htmlFor="lastName"
+						error={errors.lastName}
+						autoComplete="off"
+						{...register("lastName", {
+							required: "Los apellidos son obligatorios",
+							pattern: {
+								value: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/,
+								message: "Los apellidos solo pueden contener letras y espacios",
+							},
+						})}
+					>
+						<FormErrors error={errors.lastName} />
+					</FormInput>
+
+					<FormInput
+						type="tel"
+						placeholder=" "
+						label="Celular"
+						htmlFor="phone"
+						error={errors.phone}
+						autoComplete="off"
+						{...register("phone", {
+							required: "El número de celular es obligatorio",
+							pattern: {
+								value: /^[0-9]{10,}$/,
+								message: "El número debe tener al menos 10 dígitos y solo contener números",
+							},
+						})}
+					>
+						<FormErrors error={errors.phone} />
+					</FormInput>
+
 					<FormInput
 						type="email"
 						placeholder=" "

@@ -1,14 +1,18 @@
 import React from "react";
 import Members from "../components/members";
+import Mision_Vision from "../components/Mision_Vision";
+
+
+
 const AboutUs = () => {
   return (
     <div className="mt-6 2xl:container 2xl:mx-auto lg:py-16 lg:px-20 md:py-12 md:px-6 py-9 px-4">
-      <div className="flex flex-col lg:flex-row  gap-x-52">
+      <div className="flex flex-col lg:flex-row gap-x-52">        
         <div className="w-full lg:w-5/12 flex flex-col justify-center">
           <h1 className="text-3xl lg:text-4xl font-bold leading-9 text-gray-800 pb-4">
             Sobre nosotros
           </h1>
-          <p className="font-normal text-base leading-6 text-gray-600 ">
+          <p className="font-normal text-base leading-6 text-gray-600">
             El grupo semillero (SIIIS) nace desde 2015 con el fin de demostrar
             actividades de investigación orientadas en la ingeniería de sistemas
             teniendo en cuenta con la colaboración del grupo de investigación
@@ -25,19 +29,32 @@ const AboutUs = () => {
         </div>
         <div className="w-auto self-center">
           <img
-            className="w-full h-full "
+            className="w-full h-full"
             src="https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/image_resource%2Flogo_black.png?alt=media&token=865e49f6-bc1f-46ec-8e4e-923f503f0e96"
             alt="A group of People"
           />
         </div>
       </div>
+
+      {/* Sección de Misión y Visión */}
+      <section className="container mx-auto text-center mt-16 mb-12">
+      <div className="w-full mb-5">
+          <div className="h-1 mx-auto bg-white w-1/6 opacity-25 rounded-t" />
+        </div>
+        
+        <Mision_Vision/>
+      </section>
+
+      {/* Integrantes del semillero */}
       <Members />
+
+      {/* Desarrolladores */}
       <div className="flex lg:flex-row flex-col justify-between gap-8 p-4 mt-12 bg-slate-100" style={{ borderRadius: "1rem" }}>
         <div className="w-full lg:w-5/12 flex flex-col justify-center">
           <h1 className="text-3xl lg:text-4xl font-bold leading-9 text-gray-800 pb-4">
             Desarrolladores
           </h1>
-          <p className="font-normal text-base leading-6 text-gray-600 ">
+          <p className="font-normal text-base leading-6 text-gray-600">
             Somos estudiantes de Ingeniería de sistemas y computación de la
             Universidad Pedagógica y Tecnológica de Colombia, que nos hemos
             unido para crear un espacio de aprendizaje y colaboración para todos
@@ -45,7 +62,7 @@ const AboutUs = () => {
           </p>
         </div>
         <div className="w-full lg:w-6/12 lg:pt-8">
-          <p className="p-2 font-normal col-span-2 text-base text-center leading-6 text-gray-600 ">
+          <p className="p-2 font-normal col-span-2 text-base text-center leading-6 text-gray-600">
             Ingenieros de Sistemas y Computación
           </p>
           <div className="flex flex-col lg:flex-row justify-center gap-4">
@@ -60,7 +77,7 @@ const AboutUs = () => {
               </p>
               <p className="font-normal text-base leading-6 text-gray-600">
                 <a href="mailto:yessidduarte7@gmail.com">
-                  Correo:yessidduarte7@gmail.com
+                  Correo: yessidduarte7@gmail.com
                 </a>
               </p>
             </div>
@@ -75,16 +92,15 @@ const AboutUs = () => {
               </p>
               <p className="font-normal text-base leading-6 text-gray-600">
                 <a href="mailto:yessidduarte7@gmail.com">
-                  Correo:yessidduarte7@gmail.com
+                  Correo: yessidduarte7@gmail.com
                 </a>
               </p>
             </div>
           </div>
         </div>
-
       </div>
-      {/* ------------------------------------------------------------------------------------------------------- */}
     </div>
   );
 };
+
 export default AboutUs;
