@@ -87,14 +87,17 @@ const Reviews = () => {
                 <span className="inline-block w-1 h-1 rounded-full bg-amber-500 ml-1" />
               </div>
 
-              <Comments
-                fucntionComent="Crear"
-                comment={{
-                  id: "",
-                  review: "",
-                  userUID: "",
-                }}
-              />
+              {user && (
+                <Comments
+                  fucntionComent="Crear"
+                  comment={{
+                    id: "",
+                    review: "",
+                    userUID: "",
+                  }}
+                />
+              )}
+
             </div>
             {/* ------------------------------------------------------------------------------------------------------------------ */}
             <div className="flex items-center flex-wrap -mx-3 mt-6 ">
@@ -105,23 +108,23 @@ const Reviews = () => {
                       <div className="flex justify-end px-4 pt-4">
                         {(user.uid === review.userUID ||
                           data[0].role == "admin") && (
-                          <Dropdown inline={true} label="">
-                            <Dropdown.Item>
-                              <Comments
-                                fucntionComent="Editar"
-                                comment={review}
-                              />
-                            </Dropdown.Item>
-                            <Dropdown.Item>
-                              <button
-                                onClick={() => handleDeleteReview(review.id)}
-                                className="block py-2 px-4 text-sm text-red-600 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
-                              >
-                                Eliminar
-                              </button>
-                            </Dropdown.Item>
-                          </Dropdown>
-                        )}
+                            <Dropdown inline={true} label="">
+                              <Dropdown.Item>
+                                <Comments
+                                  fucntionComent="Editar"
+                                  comment={review}
+                                />
+                              </Dropdown.Item>
+                              <Dropdown.Item>
+                                <button
+                                  onClick={() => handleDeleteReview(review.id)}
+                                  className="block py-2 px-4 text-sm text-red-600 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+                                >
+                                  Eliminar
+                                </button>
+                              </Dropdown.Item>
+                            </Dropdown>
+                          )}
                       </div>
                     )}
                     <div className="w-full flex mb-4 items-center">
@@ -164,7 +167,7 @@ const Reviews = () => {
                     )}
                     {/* Agregar Fecha de creacion de comentario*/}
 
-                    
+
                     <div className="w-full">
                       <p className="text-sm leading-tight">
                         <span className="text-lg leading-none italic font-bold text-gray-400 mr-1">

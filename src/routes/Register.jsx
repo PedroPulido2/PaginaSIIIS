@@ -38,7 +38,6 @@ const Register = () => {
 	const onSubmit = async (data) => {
 		try {
 			const userl = await registerUser(data.email, data.password);
-			alert(userl)
 			if (userl) {
 				await addData({
 					name: "",

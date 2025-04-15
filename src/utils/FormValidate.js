@@ -15,7 +15,7 @@ export const FormValidate = () => {
 		},
 		setValues: (value) => value.trim(),
 		patternPassword: {
-			value: /(?=^.{8,}$)((?=.\d)|(?=.\W+))(?![.\n])(?=.[A-Z])(?=.[a-z]).*$/,
+			value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/,
 			message:
 				"La contraseña debe tener al menos una mayúscula, una minúscula, un número y un caracter especial",
 		},
