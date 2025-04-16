@@ -190,17 +190,23 @@ const Home = () => {
       </div>
 
       <section className="pb-20 mt-6">
-        {/* Sección azul: Bienvenida centrada */}
+      {/* Sección azul: Bienvenida centrada */}
       <div className="w-screen bg-[#003366] text-white mt-10 relative px-10">
         <div className="flex items-center justify-center p-6">
           {/* Texto centrado */}
-          <div className="text-center max-w-3xl">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <div className="text-center max-w-4xl">
+            <h2 className="text-3xl md:text5xl font-bold mb-4">
               BIENVENIDOS AL SEMILLERO DE INVESTIGACIÓN SIIIS
             </h2>
-            <p className="mb-4 text-sm md:text-base">
-            El grupo semillero (SIIIS) nace desde 2015 con el fin de demostrar actividades de investigación orientadas en la ingeniería de sistemas teniendo en cuenta con la colaboración del grupo de investigación GALASH de la seccional de Sogamoso, por lo tanto, teniendo en cuenta la cantidad de integrantes se creará proyectos de fortalecimiento para las diversas actividades.
+            <p className="mb-4 text-xs md:text-sm">
+              El grupo semillero (SIIIS) nace desde 2015 con el fin de demostrar actividades de investigación orientadas en la ingeniería de sistemas teniendo en cuenta con la colaboración del grupo de investigación GALASH de la seccional de Sogamoso, por lo tanto, teniendo en cuenta la cantidad de integrantes se creará proyectos de fortalecimiento para las diversas actividades.
             </p>
+
+            {/* Texto en azul */}
+            <p className="text-blue-300 font-semibold mb-4">
+              ¿Quieres conocer más de nosotros?
+            </p>
+
             <a
               href="/AboutUs"
               className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300"
@@ -210,6 +216,7 @@ const Home = () => {
           </div>
         </div>
       </div>
+
 
 
 
