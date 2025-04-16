@@ -131,20 +131,20 @@ const Reviews = () => {
                       <div className="overflow-hidden rounded-full w-10 h-10 bg-gray-50 border border-gray-200">
                         <img
                           src={
-                            dataUsers.find(
-                              (user) => user.userUID == review.userUID
-                            ).profileImage
+                            dataUsers.find((user) => user.userUID === review.userUID)?.profileImage ??
+                            "https://via.placeholder.com/40"
                           }
-                          alt=""
+                          alt="Foto de perfil"
                         />
                       </div>
                       <div className="flex-grow pl-3">
                         <h6 className="font-bold text-sm uppercase text-gray-600">
-                          {dataUsers.map((user) => {
-                            if (user.userUID === review.userUID) {
-                              return user.name + " " + user.lastName;
-                            }
-                          })}
+                          {(() => {
+                            const matchedUser = dataUsers.find((user) => user.userUID === review.userUID);
+                            return matchedUser
+                              ? `${matchedUser.name} ${matchedUser.lastName}`
+                              : "Usuario desconocido";
+                          })()}
                         </h6>
                       </div>
                     </div>
