@@ -7,8 +7,8 @@ const Email = () => {
 
     emailjs
       .sendForm(
-        "service_2jy0h8a",
-        "template_3s1q3qf",
+        "service_f3257sq",
+        "template_fxqjp1f",
         e.target,
         "user_5X9G3MqKj0zH8k1hJg2xQ"
       )
