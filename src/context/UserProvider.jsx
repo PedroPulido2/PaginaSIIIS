@@ -1,6 +1,7 @@
 import React from "react";
 import { createContext, useEffect, useState } from "react";
 import firebaseApp from "../Firebase";
+import { ErrorsFirebase } from "../utils/ErrorsFirebase";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, deleteUser, sendPasswordResetEmail, sendEmailVerification } from "firebase/auth";
 const auth = getAuth(firebaseApp);
 
@@ -45,10 +46,9 @@ const UserProvider = (props) => {
         return user;
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
-        return { errorCode, errorMessage };
+        console.error("Error en registro:", error.code, error.message);
+        // Lanza el error para que lo capture el try/catch en el componente
+        throw error; 
       });
 
 
@@ -65,10 +65,9 @@ const UserProvider = (props) => {
         }
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
-        return { errorCode, errorMessage };
+        console.error("Error en registro:", error.code, error.message);
+        // Lanza el error para que lo capture el try/catch en el componente
+        throw error; 
       });
 
   // logout user

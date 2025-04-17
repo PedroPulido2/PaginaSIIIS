@@ -19,7 +19,7 @@ export const ErrorsFirebase = (codeError) => {
 		case "auth/wrong-password":
 			return {
 				code: "password",
-				message: "La contraseña es incorrecta",
+				message: "La contraseña y/o el correo es incorrecta",
 			};
 		case "auth/user-not-found":
 			return {
@@ -41,6 +41,11 @@ export const ErrorsFirebase = (codeError) => {
 				code: "phone",
 				message: "Falta el numero de telefono",
 			};
+		case "auth/email-not-verified":
+			return{
+				code: "email",
+				message: "Debes verificar tu correo electrónico antes de iniciar sesión",
+			}
 		default:
 			return {
 				code: "errorIntern",

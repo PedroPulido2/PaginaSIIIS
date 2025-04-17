@@ -15,7 +15,7 @@
     "@headlessui/vue": "0.0.0-insiders.f0dd25f",
     "@heroicons/react": "1.0.6",
     "@tinymce/tinymce-react": "^6.0.0",
-    "firebase": "^11.5.0",
+    "firebase": "^10.5.0",
     "firebase-admin": "^13.2.0",
     "flowbite": "1.4.7",
     "flowbite-react": "0.1.3",

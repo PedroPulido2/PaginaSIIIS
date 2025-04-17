@@ -68,14 +68,6 @@ const Login = () => {
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Inicia sesión
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            O{" "}
-            <NavLink to="/register">
-              <span className="text-amber-500 hover:text-amber-400">
-                registrate
-              </span>
-            </NavLink>
-          </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <input type="hidden" name="remember" defaultValue="true" />

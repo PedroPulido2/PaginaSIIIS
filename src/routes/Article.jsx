@@ -144,10 +144,7 @@ const Article = ({ idPerson }) => {
           <div className="flex flex-row-reverse items-center space-x-4">
             <img
               className="w-10 h-10 border m-1 rounded-full"
-              src={
-                dataUsers.find((user) => user.userUID == item.userUID)
-                  .profileImage
-              }
+              src={dataUsers.find((user) => user.userUID === item.userUID)?.profileImage}
               alt=""
             />
             <div className="space-y-1 font-medium dark:text-white">
