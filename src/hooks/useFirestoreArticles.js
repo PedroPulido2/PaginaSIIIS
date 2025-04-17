@@ -12,140 +12,143 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
 
 // Hook
 export const useFirestoreArticles = () => {
-  const [error, setError] = useState();
+  const [error, setError] = useState(null);
   const [loadingArticle, setLoadingArticle] = useState({});
 
-  // get data from firestore with query
+  // ✅ Obtener artículos de un usuario por su UID
   const getDataArticleUser = async (userUID) => {
     try {
       setLoadingArticle((prev) => ({ ...prev, getData: true }));
-
-      const dataRef = collection(db, "users");
-      if (auth.currentUser) {
-        const filterQuery = query(
-          dataRef,
-          where("userUID", "==", auth.currentUser.uid)
-        );
-        const querySnapshot = await getDocs(filterQuery);
-        const dataDb = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        return dataDb;
-      }
-    } catch (error) {
-      console.log(error);
-      setError(error.message);
-    } finally {
-      setLoading((prev) => ({ ...prev, getData: false }));
-    }
-  };
-
-  // get data all Articles from firestore
-  const getDataArticles = async () => {
-    try {
-      setLoadingArticle((prev) => ({ ...prev, getDataArticles: true }));
+      setError(null);
 
       const dataRef = collection(db, "articles");
-      const querySnapshot = await getDocs(dataRef);
-      const dataDb = querySnapshot.docs.map((doc) => ({
+      const filterQuery = query(dataRef, where("userUID", "==", userUID));
+      const querySnapshot = await getDocs(filterQuery);
+
+      return querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      return dataDb;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setError(error.message);
+      return [];
+    } finally {
+      setLoadingArticle((prev) => ({ ...prev, getData: false }));
+    }
+  };
+
+  // ✅ Obtener todos los artículos
+  const getDataArticles = async () => {
+    try {
+      setLoadingArticle((prev) => ({ ...prev, getDataArticles: true }));
+      setError(null);
+
+      const dataRef = collection(db, "articles");
+      const querySnapshot = await getDocs(dataRef);
+
+      return querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+    } catch (error) {
+      console.error(error);
+      setError(error.message);
+      return [];
     } finally {
       setLoadingArticle((prev) => ({ ...prev, getDataArticles: false }));
     }
   };
 
-  //  add data to firestore
+  // ✅ Agregar un artículo
   const addDataArticle = async (dataArticle) => {
     try {
       setLoadingArticle((prev) => ({ ...prev, addData: true }));
-      const newDoc = dataArticle;
+      setError(null);
 
       const dataRef = collection(db, "articles");
+      await addDoc(dataRef, dataArticle);
 
-      await addDoc(dataRef, newDoc);
-      return newDoc;
+      return dataArticle;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setError(error.message);
     } finally {
       setLoadingArticle((prev) => ({ ...prev, addData: false }));
     }
   };
 
-  // update data to firestore
+  // ✅ Actualizar un artículo completo
   const updateDataArticle = async (dataArticle) => {
     try {
       setLoadingArticle((prev) => ({ ...prev, updateData: true }));
+      setError(null);
+
       const dataRef = doc(db, "articles", dataArticle.id);
       await updateDoc(dataRef, dataArticle);
 
-      return (prev) =>
-        prev.map((item) => (item.id === dataArticle.id ? dataArticle : item));
+      return true;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setError(error.message);
+      return false;
     } finally {
       setLoadingArticle((prev) => ({ ...prev, updateData: false }));
     }
   };
 
-  // update Role to firestore
+  // ✅ Actualizar solo el rol del artículo
   const updateRoleArticle = async (dataArticle) => {
     try {
-      setLoadingArticle((prev) => ({ ...prev, updateData: true }));
-      const dataRef = doc(db, "articles", dataArticle.id);
-      const newData = {
-        role: dataArticle.role,
-      };
-      await updateDoc(dataRef, newData);
+      setLoadingArticle((prev) => ({ ...prev, updateRole: true }));
+      setError(null);
 
-      return (prev) =>
-        prev.map((item) => (item.id === dataArticle.id ? newData : item));
+      const dataRef = doc(db, "articles", dataArticle.id);
+      await updateDoc(dataRef, { role: dataArticle.role });
+
+      return true;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setError(error.message);
+      return false;
     } finally {
-      setLoadingArticle((prev) => ({ ...prev, updateData: false }));
+      setLoadingArticle((prev) => ({ ...prev, updateRole: false }));
     }
   };
 
-  // delete data to firestore
+  // ✅ Eliminar un artículo
   const deleteDataArticle = async (idArticle) => {
     try {
       setLoadingArticle((prev) => ({ ...prev, [idArticle]: true }));
+      setError(null);
+
       const docRef = doc(db, "articles", idArticle);
       await deleteDoc(docRef);
-      const dataArticle = await getDataArticles();
-      return dataArticle.filter((item) => item.id !== idArticle);
+
+      return true;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setError(error.message);
+      return false;
     } finally {
       setLoadingArticle((prev) => ({ ...prev, [idArticle]: false }));
     }
   };
 
-  // return data
   return {
     error,
     loadingArticle,
     getDataArticleUser,
-    addDataArticle,
     getDataArticles,
-    deleteDataArticle,
+    addDataArticle,
     updateDataArticle,
     updateRoleArticle,
+    deleteDataArticle,
   };
 };
