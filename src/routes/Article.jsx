@@ -5,8 +5,11 @@ import {useFirestoreArticles} from "../hooks/useFirestoreArticles";
 import {ErrorsFirebase} from "../utils/ErrorsFirebase";
 import {getStorage, ref, deleteObject} from "firebase/storage";
 import Modal_Article from "../components/Modal_Article";
+import {getAuth} from "firebase/auth";
 
 const Article = ({idPerson}) => {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
     const {
         loadingArticle,
         getDataArticles,
@@ -99,7 +102,7 @@ const Article = ({idPerson}) => {
                     <p className="font-semibold text-slate-200">{article.description}</p>
                     <div className="flex justify-end gap-4 mt-4">
                         <Modal_Article dataArticle1={article} functionEdit="update"/>
-                        {(users.some(u => u.role === "admin" || u.userUID === article.userUID)) && (
+                        {currentUser && (users.some(u => u.role === "admin" || u.userUID === article.userUID)) && (
                             <button
                                 onClick={() => handleDelete(article)}
                                 className="py-2 px-5 text-sm font-medium text-gray-900 bg-white rounded-lg border hover:bg-amber-500 hover:text-white"
@@ -155,9 +158,11 @@ const Article = ({idPerson}) => {
                             <li>
                                 <a href="/Article" className="text-amber-500 font-bold text-xl">ARTÍCULOS</a>
                             </li>
-                            <li>
-                                <Modal_Article dataArticle1 functionEdit="create"/>
-                            </li>
+                            {currentUser && (
+                                <li>
+                                    <Modal_Article dataArticle1 functionEdit="create"/>
+                                </li>
+                            )}
                         </ul>
                     </div>
                 </div>
