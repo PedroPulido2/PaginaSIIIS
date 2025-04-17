@@ -196,11 +196,10 @@ const Home = () => {
           {/* Texto centrado */}
           <div className="text-center max-w-3xl">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Todos los años son bienvenidos todos aquellos que deseen mejorar
+              BIENVENIDOS AL SEMILLERO DE INVESTIGACIÓN SIIIS
             </h2>
             <p className="mb-4 text-sm md:text-base">
-              Sabemos lo difícil que es encajar en un ambiente nuevo como lo es la universidad,
-              por eso se ofrece este espacio, el cual es un grupo en el que conocerás nuevas personas y nuevas maneras de pensar.
+            El grupo semillero (SIIIS) nace desde 2015 con el fin de demostrar actividades de investigación orientadas en la ingeniería de sistemas teniendo en cuenta con la colaboración del grupo de investigación GALASH de la seccional de Sogamoso, por lo tanto, teniendo en cuenta la cantidad de integrantes se creará proyectos de fortalecimiento para las diversas actividades.
             </p>
             <a
               href="/AboutUs"
@@ -272,10 +271,36 @@ const Home = () => {
             <img src="https://i.imgur.com/uRRGblH.png" alt="Sistemas" className="max-w-[120px] max-h-[120px] object-contain" />
           </div>
         </div>
-
         
-        {/* Sección azul: Conoce nuestros proyectos */}
-        <div className="bg-[#003366] text-white rounded-xl mt-10 flex flex-col md:flex-row overflow-hidden border-2 border-blue-300">
+         {/* Video */}
+         <div className="w-full md:w-1/2 px-4 mx-auto">
+            <div className="shadow-lg rounded-lg overflow-hidden">
+              <video className="w-full h-full object-cover" controls>
+                <source
+                  src="https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/videos%2Fvideo_home.mp4?alt=media&token=d4728384-b3cd-46fd-9b46-bc0f009bb91e"
+                  type="video/mp4"
+                />
+              </video>
+            </div>
+          </div>
+      
+      <div className="w-full px-4 flex justify-center">
+        {/* Texto */}
+        <div className="w-full bg-[#FCD669] py-6 px-4 text-center">
+          <p className="text-[#6B3E00] font-medium text-3xl mb-4">
+            Conoce más del semillero en nuestro blog
+          </p>
+          <a
+            href="https://semillerosiiis.blogspot.com/"
+            className="inline-block bg-[#9B6A2F] text-white font-medium py-2 px-6 rounded"
+          >
+            Blog
+          </a>
+        </div>
+      </div>
+
+      {/* Sección azul: Conoce nuestros proyectos */}
+      <div className="bg-[#003366] text-white rounded-xl mt-10 flex flex-col md:flex-row overflow-hidden border-2 border-blue-300">
           
           {/* Contenedor de texto centrado verticalmente */}
           <div className="flex-1 flex items-center p-6">
@@ -302,49 +327,26 @@ const Home = () => {
             />
           </div>
         </div>
-
-
-      <div className="w-full px-4 flex justify-center">
+      
+      <div className="flex items-center justify-center p-6">
         {/* Texto */}
-        <div className="w-full px-4 mt-10">
-          <div className="bg-white rounded-xl shadow-lg p-8 w-full">
-            <div className="text-yellow-500 text-4xl font-bold mb-4 leading-tight text-center">
-              Conoce más del semillero en nuestro blog
-            </div>
-            <div className="text-center">
-              <a
-                href="https://semillerosiiis.blogspot.com/"
-                className="inline-block bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-3 px-6 rounded-full transition-colors duration-300"
-              >
-                Ver más
-              </a>
-            </div>
-          </div>
+        <div className="w-full bg-[#FCD669] py-6 px-4 text-center">
+          <h2 className="text-[#6B3E00] font-bold text-2xl md:text-3xl mb-4">
+            ¡Estamos a un solo click de distancia de ti!
+          </h2>
+          <a
+            href="/Contact"
+            className="inline-block bg-[#9B6A2F] hover:bg-[#805325] text-white font-semibold text-lg py-3 px-6 rounded transition-colors duration-300"
+          >
+            Contactar
+          </a>
         </div>
       </div>
+
+
 
       {/* Testimonios */}
       <Reviews />
-
-      <div className="w-full px-4 flex justify-center">
-        {/* Texto */}
-        <div className="w-full px-4 mt-10">
-          <div className="bg-white rounded-xl shadow-lg p-8 w-full">
-            <div className="text-yellow-500 text-4xl font-bold mb-4 leading-tight text-center">
-            ¡Estamos a un solo click de distancia de ti!
-            </div>
-            <div className="text-center">
-              <a
-                href="/Contact"
-                className="inline-block bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-3 px-6 rounded-full transition-colors duration-300"
-              >
-                Contactar
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-      
       {/* Mapa de Google */}
       <div className="w-full mt-10">
         <div className="relative w-full h-[400px]">
