@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useReducer } from "react";
-import { useForm } from "react-hook-form";
-import { useFirestore } from "../hooks/useFirestore";
-import { useFirestoreArticles } from "../hooks/useFirestoreArticles";
-import { ErrorsFirebase } from "../utils/ErrorsFirebase";
-import { getStorage, ref, deleteObject } from "firebase/storage";
+import React, {useEffect, useState, useReducer} from "react";
+import {useForm} from "react-hook-form";
+import {useFirestore} from "../hooks/useFirestore";
+import {useFirestoreArticles} from "../hooks/useFirestoreArticles";
+import {ErrorsFirebase} from "../utils/ErrorsFirebase";
+import {getStorage, ref, deleteObject} from "firebase/storage";
 import Modal_Article from "../components/Modal_Article";
 
-const Article = ({ idPerson }) => {
+const Article = ({idPerson}) => {
     const {
         loadingArticle,
         getDataArticles,
@@ -19,7 +19,7 @@ const Article = ({ idPerson }) => {
         getData,
     } = useFirestore();
 
-    const { setError } = useForm();
+    const {setError} = useForm();
 
     const [users, setUsers] = useState([]);
     const [allArticles, setAllArticles] = useState([]);
@@ -42,7 +42,7 @@ const Article = ({ idPerson }) => {
             const articlesData = await getDataArticles();
             setUsers(usersData);
             setAllArticles(articlesData);
-            dispatch({ type: "all", payload: articlesData });
+            dispatch({type: "all", payload: articlesData});
         };
         fetchData();
     }, []);
@@ -67,8 +67,8 @@ const Article = ({ idPerson }) => {
             await deleteObject(imageRef);
             window.location.reload(); // opcional: reemplazar por manejo de estado
         } catch (error) {
-            const { code, message } = ErrorsFirebase(error.code);
-            setError(code, { message });
+            const {code, message} = ErrorsFirebase(error.code);
+            setError(code, {message});
         }
     };
 
@@ -98,7 +98,7 @@ const Article = ({ idPerson }) => {
                     <p className="font-semibold">{article.title}</p>
                     <p className="font-semibold text-slate-200">{article.description}</p>
                     <div className="flex justify-end gap-4 mt-4">
-                        <Modal_Article dataArticle1={article} functionEdit="update" />
+                        <Modal_Article dataArticle1={article} functionEdit="update"/>
                         {(users.some(u => u.role === "admin" || u.userUID === article.userUID)) && (
                             <button
                                 onClick={() => handleDelete(article)}
@@ -156,7 +156,7 @@ const Article = ({ idPerson }) => {
                                 <a href="/Article" className="text-amber-500 font-bold text-xl">ARTÍCULOS</a>
                             </li>
                             <li>
-                                <Modal_Article dataArticle1 functionEdit="create" />
+                                <Modal_Article dataArticle1 functionEdit="create"/>
                             </li>
                         </ul>
                     </div>
