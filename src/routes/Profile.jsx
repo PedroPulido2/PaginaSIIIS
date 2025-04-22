@@ -32,7 +32,7 @@ const Profile = () => {
 
   const cancelButtonRef = useRef(null);
 
-  const { deleteUserWhitID } = useContext(UserContext);
+  const { deleteUserWithID } = useContext(UserContext);
   const { deleteDataArticle } = useFirestoreArticles();
   const { deleteDataReview } = useFirestoreReviews();
 
@@ -102,8 +102,8 @@ const Profile = () => {
       }
       await deleteDataArticle(userData.id);
       await deleteDataReview(userData.id);
-      await deleteUserWhitID();
-      window.location.href = "/";
+      await deleteUserWithID();
+      //window.location.href = "/";
     } catch (error) {
       console.log(error.code);
       const { code, message } = ErrorsFirebase(error.code);

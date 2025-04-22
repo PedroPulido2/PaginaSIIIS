@@ -44,6 +44,8 @@ const Register = () => {
 					lastName: data.lastName,
 					phone: data.phone,
 					email: data.email,
+					academicStatus: "Activo",
+					role: "user",
 					profileImage: "https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"
 				});
 				window.location.href = "/";
