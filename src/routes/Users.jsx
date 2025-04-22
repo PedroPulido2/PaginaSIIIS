@@ -16,10 +16,12 @@ const Users = () => {
   const reducer = (state, action) => {
     switch (action.type) {
       case "filter":
-        return action.payload.data.filter((dataUsers) => {
-          return dataUsers.name
-            .toLowerCase()
-            .includes(action.payload.filter.toLowerCase());
+        return action.payload.data.filter((user) => {
+          const filter = action.payload.filter.toLowerCase();
+          return (
+            user.name.toLowerCase().includes(filter) ||
+            (user.academicStatus && user.academicStatus.toLowerCase().includes(filter))
+          );
         });
       case "all":
         return action.payload;
