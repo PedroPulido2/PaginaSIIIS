@@ -1,6 +1,7 @@
 import React from "react";
 import { createContext, useEffect, useState } from "react";
 import firebaseApp from "../Firebase";
+import { ErrorsFirebase } from "../utils/ErrorsFirebase";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, deleteUser, sendPasswordResetEmail, sendEmailVerification } from "firebase/auth";
 const auth = getAuth(firebaseApp);
 
@@ -45,10 +46,9 @@ const UserProvider = (props) => {
         return user;
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
-        return { errorCode, errorMessage };
+        console.error("Error en registro:", error.code, error.message);
+        // Lanza el error para que lo capture el try/catch en el componente
+        throw error; 
       });
 
 
@@ -65,19 +65,31 @@ const UserProvider = (props) => {
         }
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
-        return { errorCode, errorMessage };
+        console.error("Error en registro:", error.code, error.message);
+        // Lanza el error para que lo capture el try/catch en el componente
+        throw error; 
       });
 
   // logout user
   const logoutUser = () => signOut(auth);
 
   // delete user
-  const deleteUserWhitID = () => {
-    const userTest = getAuth().currentUser;
-    return deleteUser(userTest);
+  const deleteUserWithID = async () => {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      
+      if (!user) {
+        throw new Error("No hay usuario autenticado");
+      }
+      
+      await deleteUser(user);
+      console.log("Usuario eliminado correctamente");
+      return true;
+    } catch (error) {
+      console.error("Error al eliminar usuario:", error);
+      throw error; // Re-lanzamos el error para manejo superior
+    }
   };
 
   // delete user whit id
@@ -99,7 +111,7 @@ const UserProvider = (props) => {
         registerUser,
         loginUser,
         logoutUser,
-        deleteUserWhitID,
+        deleteUserWithID,
         resetPassword
       }}
     >

@@ -12,6 +12,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
 
@@ -45,24 +46,20 @@ export const useFirestore = () => {
       setLoading((prev) => ({ ...prev, getData: false }));
     }
   };
-  // get data user whit id from firestore with query
+
+  // get data user with id from firestore with query
   const getDataUserId = async (userUID) => {
     try {
       setLoading((prev) => ({ ...prev, getDataUserId: true }));
 
       const dataRef = collection(db, "users");
-
-      const filterQuery = query(
-        dataRef,
-        where("userUID", "==", userUID)
-      );
+      const filterQuery = query(dataRef, where("userUID", "==", userUID));
       const querySnapshot = await getDocs(filterQuery);
       const dataDb = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
       return dataDb;
-
     } catch (error) {
       console.log(error);
       setError(error.message);
@@ -91,7 +88,7 @@ export const useFirestore = () => {
     }
   };
 
-  //  add data to firestore
+  // add data to firestore
   const addData = async (dataUser) => {
     try {
       setLoading((prev) => ({ ...prev, addData: true }));
@@ -103,10 +100,10 @@ export const useFirestore = () => {
         role: "user",
         userUID: auth.currentUser.uid,
         profileImage: dataUser.profileImage,
+        academicStatus: dataUser.academicStatus || "Activo",
       };
 
       const dataRef = collection(db, "users");
-
       await addDoc(dataRef, newDoc);
       return newDoc;
     } catch (error) {
@@ -125,9 +122,7 @@ export const useFirestore = () => {
       await updateDoc(dataRef, dataUser);
 
       return ((prev) =>
-        prev.map((item) => (item.id === dataUser.id ? dataUser : item))
-      );
-
+        prev.map((item) => (item.id === dataUser.id ? dataUser : item)));
     } catch (error) {
       console.log(error);
       setError(error.message);
@@ -156,6 +151,22 @@ export const useFirestore = () => {
     }
   };
 
+  const updateAcademicStatus = async (dataUser) => {
+    try {
+      setLoading((prev) => ({ ...prev, updateAcademicStatus: true }));
+      const dataRef = doc(db, "users", dataUser.id);
+      await updateDoc(dataRef, {
+        academicStatus: dataUser.academicStatus
+      });
+      return dataUser; // Devuelve el objeto actualizado directamente
+    } catch (error) {
+      console.log(error);
+      setError(error.message);
+      throw error; // Lanza el error para manejarlo en el componente
+    } finally {
+      setLoading((prev) => ({ ...prev, updateAcademicStatus: false }));
+    }
+  };
   // delete data to firestore
   const deleteData = async (idUser) => {
     try {
@@ -173,7 +184,8 @@ export const useFirestore = () => {
   };
 
   // return data
-  return {    error,
+  return {
+    error,
     loading,
     getData,
     getDataUserId,
@@ -182,5 +194,6 @@ export const useFirestore = () => {
     deleteData,
     updateData,
     updateRole,
+    updateAcademicStatus, // <-- nuevo método expuesto
   };
 };

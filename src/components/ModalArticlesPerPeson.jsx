@@ -11,6 +11,7 @@ import { useFirestoreReviews } from "../hooks/useFirestoreReviews";
 import Article from "../routes/Article";
 import { ErrorsFirebase } from "../utils/ErrorsFirebase";
 import SelectRole from "./SelectRole";
+import SelectAcademicStatus from "./academicStatus";
 
 const ModalArticlesPerPerson = ({ item, data }) => {
   const [open, setOpen] = useState(false);
@@ -66,12 +67,20 @@ const ModalArticlesPerPerson = ({ item, data }) => {
               {item.name + " " + item.lastName}
             </h1>
 
-            {/* para resolucion de celular hacer la letra más pequeña */}
             <div className="flex-auto font-semibold text-teal-800 my-6 border-b-2 text-center" style={{ fontSize: "smaller" }}>
-
               {item.email}
             </div>
+
+            {!data || data.role !== "admin" ? (
+              <div className="w-full text-center text-sm text-gray-700 font-medium">
+                Estado académico:{" "}
+                <span className="text-teal-700 font-semibold">
+                  {item.academicStatus}
+                </span>
+              </div>
+            ) : null}
           </div>
+
           {data.role === "admin" && (
             <>
               <div className="flex space-x-4 mb-6 text-sm font-medium">
@@ -80,8 +89,14 @@ const ModalArticlesPerPerson = ({ item, data }) => {
                 </div>
               </div>
 
+              <div className="flex space-x-4 mb-6 text-sm font-medium">
+                <div className="flex-auto flex flex-col space-y-2">
+                  <SelectAcademicStatus idUser={item.id} academicStatus={item.academicStatus} />
+                </div>
+              </div>
+
               <button
-                className="h-10 w-full  font-semibold rounded-md bg-black text-white"
+                className="h-10 w-full font-semibold rounded-md bg-black text-white"
                 type="button"
                 onClick={() => handleClickDelete(item.id, item.userUID)}
               >
