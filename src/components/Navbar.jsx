@@ -254,59 +254,44 @@ const Navbar = () => {
                     </div>
 
                     <Disclosure.Panel className="sm:hidden">
-                        <div className="px-2 pt-2 pb-3 space-y-1 z-50">
-                            {
-                                // mobile menu
-                                navigation.map((item) =>
-                                    user && (item.name === "Login" || item.name === "Registro") ? (
-                                            ""
-                                        ) :
-                                        item.name == "Blog" ? (
-                                                <a
-                                                    key={item.name}
-                                                    target={"_blank"}
-                                                    href={item.href}
-                                                    className={classNames(
-                                                        item.current
-                                                            ? "bg-gray-900 text-white"
-                                                            : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                                                        "px-3 py-2 rounded-md text-sm font-medium"
-                                                    )}
-                                                >
-                                                    {item.name}
-                                                </a>
-                                            ) :
-                                            item.name === "Registro" || item.name === "Login" ? (
-                                                <NavLink
-                                                    key={item.name}
-                                                    to={item.href}
-                                                    className={classNames(
-                                                        true
-                                                            ? "bg-amber-500 text-white"
-                                                            : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                                                        "block px-3 py-2 rounded-md text-base font-medium"
-                                                    )}
-                                                    aria-current="page"
-                                                >
-                                                    {item.name}
-                                                </NavLink>
-                                            ) : (
-                                                <NavLink
-                                                    key={item.name}
-                                                    to={item.href}
-                                                    className={classNames(
-                                                        item.current
-                                                            ? "bg-gray-900 text-white"
-                                                            : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                                                        "block px-3 py-2 rounded-md text-base font-medium"
-                                                    )}
-                                                    aria-current={item.current ? "page" : undefined}
-                                                >
-                                                    {item.name}
-                                                </NavLink>
+                        <div className="px-2 pt-2 pb-3 space-y-1">
+                            {navigation.map((item) =>
+                                user && (item.name === "Login" || item.name === "Registro") ? null : item.name === "BLOG" ? (
+                                    <a
+                                        key={item.name}
+                                        href={item.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={classNames(
+                                            item.current ? "bg-gray-900 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                                            "block px-3 py-2 rounded-md text-base font-medium"
+                                        )}
+                                    >
+                                        {item.name}
+                                    </a>
+                                ) : (
+                                    <NavLink
+                                        key={item.name}
+                                        to={item.href}
+                                        className={({ isActive }) =>
+                                            classNames(
+                                                isActive ? "text-[#F5BC4A]" : "text-gray-300 hover:text-[#F5BC4A]",
+                                                "block px-3 py-2 rounded-md text-base font-medium"
                                             )
+                                        }
+                                    >
+                                        {item.name}
+                                    </NavLink>
                                 )
-                            }
+                            )}
+                            {!user && (
+                                <NavLink
+                                    to="/login"
+                                    className="block mt-2 px-3 py-2 rounded-md text-base font-medium text-[#947646] bg-[#F7D467] hover:bg-[#F5BC4A] text-center transition duration-300"
+                                >
+                                    Iniciar sesión
+                                </NavLink>
+                            )}
                         </div>
                     </Disclosure.Panel>
                 </>
