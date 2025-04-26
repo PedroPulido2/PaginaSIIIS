@@ -28,6 +28,8 @@ const Profile = () => {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState([]);
   const imgRef = useRef();
+  const hvRef = useRef();
+  const locationHV = useRef();
   const locationImage = useRef();
 
   const cancelButtonRef = useRef(null);
@@ -100,6 +102,12 @@ const Profile = () => {
             // Uh-oh, an error occurred!
           });
       }
+
+      if (userData.locationCurriculum) {
+        const hvRef = ref(storage, userData.locationCurriculum);
+        await deleteObject(hvRef);
+      }
+      await deleteData(userData.id); 
       await deleteDataArticle(userData.id);
       await deleteDataReview(userData.id);
       await deleteUserWithID();
@@ -142,6 +150,73 @@ const Profile = () => {
     };
 
     onSubmit(dataNew);
+  };
+
+  const hvHandler = async (e) => {
+    // Eliminar el PDF anterior si existe
+    if (data[0].locationHV) {
+      const desertRef = ref(storage, data[0].locationHV);
+      await deleteObject(desertRef)
+        .then(() => {})
+        .catch((error) => {
+          console.error("Error al eliminar PDF anterior:", error);
+        });
+    }
+  
+    setLoadingImage(true);
+    const file = e.target.files[0];
+    
+    // Validar que sea un PDF
+    if (file.type !== "application/pdf") {
+      alert("Por favor sube un archivo PDF");
+      return;
+    }
+  
+    // Crear nombre único para el archivo
+    const name_file = 
+      data[0].name.split(" ").join("") + 
+      data[0].userUID.split(" ").join("") + 
+      "_CV";
+    
+    const storageRef = ref(storage, `curriculums_users/${name_file}`);
+    locationHV.current = `curriculums_users/${name_file}`;
+    
+    // Subir el archivo
+    await uploadBytes(storageRef, file);
+    const url = await getDownloadURL(storageRef);
+    
+    // Actualizar referencias y datos
+    hvRef.current = url;
+    const dataNew = {
+      ...data[0],
+      curriculumPDF: url,
+      locationCurriculum: locationHV.current,
+    };
+  
+    onSubmit(dataNew);
+  };
+
+  const deleteResume = async () => {
+    if (!data[0]?.locationCurriculum) return;
+  
+    try {
+      // Eliminar el archivo de Storage
+      const desertRef = ref(storage, data[0].locationCurriculum);
+      await deleteObject(desertRef);
+  
+      // Actualizar el documento del usuario eliminando los campos del PDF
+      const dataNew = {
+        ...data[0],
+        curriculumPDF: null,
+        locationCurriculum: null
+      };
+  
+      await onSubmit(dataNew);
+      alert("Hoja de vida eliminada correctamente");
+    } catch (error) {
+      console.error("Error al eliminar hoja de vida:", error);
+      alert("Error al eliminar hoja de vida");
+    }
   };
 
   return (
@@ -233,6 +308,7 @@ const Profile = () => {
                   />
                 </svg>
               </div>
+              
             </label>
 
             <input
@@ -243,6 +319,58 @@ const Profile = () => {
               onChange={fileHandler}
             />
           </figure>
+        </div>
+        {/* Sección para subir hoja de vida */}
+        <div className="my-6">
+          <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+            Hoja de Vida (PDF)
+          </label>
+          <div className="flex items-center">
+            {data[0]?.curriculumPDF ? (
+              <>
+                <a 
+                  href={data[0].curriculumPDF} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:underline mr-4"
+                >
+                  Ver hoja de vida actual
+                </a>
+                <button
+                  onClick={deleteResume}
+                  className="ml-4 text-red-600 hover:text-red-800 text-sm font-medium"
+                  type="button"
+                >
+                  Eliminar PDF
+                </button>
+              </>
+            ) : (
+              <span className="text-gray-500 mr-4">No hay hoja de vida subida</span>
+            )}
+            <label className="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-800 py-2 px-4 rounded inline-flex items-center">
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-5 w-5 mr-2" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" 
+                />
+              </svg>
+              <span>{data[0]?.resumeUrl ? "Cambiar PDF" : "Subir PDF"}</span>
+              <input 
+                type="file" 
+                className="hidden" 
+                accept="application/pdf" 
+                onChange={hvHandler}
+              />
+            </label>
+          </div>
         </div>
         {/* ---------------------------------------------------------------------------------------------------------------- */}
 
