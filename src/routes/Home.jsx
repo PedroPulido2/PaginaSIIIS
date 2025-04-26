@@ -5,6 +5,7 @@ import {getStorage, ref, listAll, getDownloadURL, deleteObject, uploadBytes} fro
 import Contact_Us from "../components/ContactUs";
 import Reviews from "../components/Reviews";
 import {useFirestore} from "../hooks/useFirestore";
+import Article from "../routes/Article";
 
 const storage = getStorage(firebaseApp);
 
@@ -305,35 +306,13 @@ const Home = () => {
                     </div>
                 </div>
 
-                {/* Sección azul: Conoce nuestros proyectos */}
-                <div
-                    className="bg-[#003366] text-white rounded-xl mt-10 flex flex-col md:flex-row overflow-hidden border-2 border-blue-300">
-
-                    {/* Contenedor de texto centrado verticalmente */}
-                    <div className="flex-1 flex items-center p-6">
-                        <div>
-                            <h2 className="text-2xl md:text-3xl font-bold mb-2">Conoce nuestros proyectos</h2>
-                            <p className="mb-4 text-sm md:text-base">
-                                Con nosotros podrás sacar adelante ese proyecto que más te gusta
-                            </p>
-                            <a
-                                href="/article"
-                                className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300"
-                            >
-                                Ver más
-                            </a>
-                        </div>
-                    </div>
-
-                    {/* Imagen a la derecha */}
-                    <div className="flex-1">
-                        <img
-                            src="https://scontent.feyp2-1.fna.fbcdn.net/v/t39.30808-6/468388102_437557126077592_8986359712512938943_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeG5O_oCqJaz8mKGIyX4DHaIgr-FBY6fa22Cv4UFjp9rbW39marFU9WORBtiHv-B-cpaoEOUxW8IAe4RNhf8R4fk&_nc_ohc=HRT849bgkEIQ7kNvwHQcC46&_nc_oc=Adn-OiXWrQIPN6ixfJKOOVo6oxRL6x0rFEKkfBvF2KMEplYW_MK7MhmWcAUonu4aCJQ&_nc_zt=23&_nc_ht=scontent.feyp2-1.fna&_nc_gid=teFEfm3vuvWMem3V-MGQnw&oh=00_AfEpjpL_TDnK3qkfU9RKV4crLZJbcJFFeBpbjrM5AbRQgA&oe=6800C423"
-                            alt="Conoce nuestros proyectos"
-                            className="w-full h-full object-cover"
-                        />
-                    </div>
+                {/* Título "Proyectos" */}
+                <div className="bg-[#fffaf0] text-[#7b4a12] rounded-xl mt-10 flex justify-center items-center py-8">
+                  <h2 className="text-4xl font-bold">Proyectos</h2>
                 </div>
+
+                {/* Aquí abajo tu componente grande de artículos */}
+                <Article />
 
                 <div className="flex items-center justify-center p-6">
                     {/* Texto */}
