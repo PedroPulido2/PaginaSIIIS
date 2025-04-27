@@ -321,48 +321,51 @@ const Profile = () => {
           </figure>
         </div>
         {/* Sección para subir hoja de vida */}
-        <div className="my-6">
-          <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-            Hoja de Vida (PDF)
-          </label>
-          <div className="flex items-center">
+        <div className="my-6 p-4 border rounded-lg bg-gray-50">
+          <h3 className="text-lg font-medium text-gray-900 mb-3">Hoja de Vida (PDF)</h3>
+          
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             {data[0]?.curriculumPDF ? (
-              <>
-                <a 
-                  href={data[0].curriculumPDF} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-blue-500 hover:underline mr-4"
-                >
-                  Ver hoja de vida actual
-                </a>
-                <button
-                  onClick={deleteResume}
-                  className="ml-4 text-red-600 hover:text-red-800 text-sm font-medium"
-                  type="button"
-                >
-                  Eliminar PDF
-                </button>
-              </>
+              <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-3">
+                <div className="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                  <span className="text-gray-700">Documento subido</span>
+                </div>
+                
+                <div className="flex gap-2">
+                  <a 
+                    href={data[0].curriculumPDF} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    Ver PDF
+                  </a>
+                  <button
+                    onClick={deleteResume}
+                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    type="button"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </div>
             ) : (
-              <span className="text-gray-500 mr-4">No hay hoja de vida subida</span>
+              <div className="flex-1 flex items-center text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                </svg>
+                No hay documento subido
+              </div>
             )}
-            <label className="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-800 py-2 px-4 rounded inline-flex items-center">
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-5 w-5 mr-2" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke="currentColor"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" 
-                />
+            
+            <label className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
-              <span>{data[0]?.resumeUrl ? "Cambiar PDF" : "Subir PDF"}</span>
+              {data[0]?.curriculumPDF ? "Cambiar PDF" : "Subir PDF"}
               <input 
                 type="file" 
                 className="hidden" 
@@ -372,7 +375,6 @@ const Profile = () => {
             </label>
           </div>
         </div>
-        {/* ---------------------------------------------------------------------------------------------------------------- */}
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid gap-6 my-6 lg:grid-cols-2">
