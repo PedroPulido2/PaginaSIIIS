@@ -1,5 +1,5 @@
 import React from "react";
-import { useContext, useRef, useState } from "react";
+import { useEffect, useContext, useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { useFirestoreArticles } from "../hooks/useFirestoreArticles";
 
@@ -11,21 +11,83 @@ import { useForm } from "react-hook-form";
 import firebaseApp from "../Firebase";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { UserContext } from "../context/UserProvider";
+import {
+  getFirestore,
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 
 const storage = getStorage(firebaseApp);
 
+const getDataUserId = async (userUID) => {
+  try {
+    const db = getFirestore(firebaseApp);
+    const dataRef = collection(db, "users");
+    const filterQuery = query(dataRef, where("userUID", "==", userUID));
+    const querySnapshot = await getDocs(filterQuery);
+    const dataDb = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return dataDb;
+  } catch (error) {
+    console.log(error);
+    throw error; // mejor lanzar el error para que el componente lo maneje
+  }
+};
+
 const EditorTiny = ({ dataArticle1, functionEdit }) => {
+
   const { user } = useContext(UserContext);
+  const [user1, setUser1] = useState(null);
+
   const editorRef = useRef(null);
   const [loadingImage, setLoadingImage] = useState(false);
   const imgRef = useRef();
   const locationImage = useRef();
-  const [stateReadOnly, setStateReadOnly] = useState(
-    (dataArticle1.userUID === user.uid && functionEdit === "update") ||
-      functionEdit != "update"
-      ? false
-      : true
-  );
+  const [stateReadOnly, setStateReadOnly] = useState(true); // 👈 lo dejamos de entrada en true
+  const [stateReadOnlyDate, setStateReadOnlyDate] = useState(false); // 👈 lo dejamos de entrada en true
+
+
+  useEffect(() => {
+    if (!user || !user1) return;
+  
+    const canEdit =
+      (dataArticle1.userUID === user.uid || (user1 && user1.role === "admin") || functionEdit !== "update");
+  
+    setStateReadOnly(!canEdit);
+
+    // 🔥 Si está en modo actualización, la fecha NO se puede editar
+    if (functionEdit === "update") {
+      setStateReadOnlyDate(true);
+    } else {
+      setStateReadOnlyDate(false);
+    }
+  
+
+  }, [user, user1, functionEdit, dataArticle1.userUID]);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const data = await getDataUserId(user.uid);
+      if (data.length > 0) {
+        setUser1(data[0]);
+      }
+    };
+  
+    if (user?.uid) {
+      fetchUser();
+    }
+  }, [user]);
+
+  console.log("Usuario que recuperé:", user1);
+  
   locationImage.current = "images_articles/SinImagen.jpg";
   imgRef.current =
     "https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_articles%2FsinImagen.png?alt=media&token=df4c7c05-07c0-4812-a2dc-e9ccc01dc054";
@@ -57,7 +119,7 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
       ...dataArticle1,
       ...data,
       imageArticle: imgRef.current,
-      userUID: user.uid,
+      userUID: functionEdit === "update" ? dataArticle1.userUID : user.uid,
       locationImage: locationImage.current,
     };
     try {
@@ -210,7 +272,7 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
             label="Fecha"
             htmlFor="date"
             name="date"
-            readOnly={stateReadOnly}
+            readOnly={stateReadOnlyDate}
             error={errors.date}
             {...register("date", {
               required,
@@ -245,7 +307,7 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
         </label>
 
         {/* -------------EDITOR----------------------------------------------------------------------------------------- */}
-        {dataArticle1.userUID === user.uid || functionEdit != "update" ? (
+        {dataArticle1.userUID === user.uid || (user1 && user1.role === "admin") || functionEdit !== "update" ? (
           <>
             <Editor
               apiKey="xa7jibfvgt9hh2wyjzamlbtt8cq0hjb0niph3zn58qelqrnh"
