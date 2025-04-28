@@ -2,46 +2,53 @@ import React from "react";
 import Members from "../components/members";
 import Mision_Vision from "../components/Mision_Vision";
 
-
-
 const AboutUs = () => {
   return (
-    <div className="mt-6 2xl:container 2xl:mx-auto lg:py-16 lg:px-20 md:py-12 md:px-6 py-9 px-4">
-      <div className="flex flex-col lg:flex-row gap-x-52">        
-        <div className="w-full lg:w-5/12 flex flex-col justify-center">
-          <h1 className="text-3xl lg:text-4xl font-bold leading-9 text-gray-800 pb-4">
-            Sobre nosotros
-          </h1>
-          <p className="font-normal text-base leading-6 text-gray-600">
-            El grupo semillero (SIIIS) nace desde 2015 con el fin de demostrar
-            actividades de investigación orientadas en la ingeniería de sistemas
-            teniendo en cuenta con la colaboración del grupo de investigación
-            GALASH de la seccional de Sogamoso, por lo tanto, teniendo en cuenta
-            la cantidad de integrantes se creará proyectos de fortalecimiento
-            para las diversas actividades. Es por ello que al tener herramientas
-            tecnológicas de la información y la comunicación (TIC) y de la
-            Transformación Digital, se pretenden orientar a los Estudiantes,
-            Docentes y demás interesados de manera creativa, emocional e
-            innovadora en procesos que se van a desarrollar. Así mismo se cuenta
-            con una Identidad de Marca del Grupo SIIIS para promocionar las
-            investigaciones en curso.
+    <div className="flex flex-col items-center w-full">
+
+      {/* Imagen de fondo con texto encima */}
+      <div className="relative w-full h-80 overflow-hidden">
+        <img
+          className="w-full h-full object-cover object-center"
+          src="https://i.imgur.com/wVn9tnw.jpeg" // Enlace directo a la imagen de Imgur
+          alt="Fondo SIIIS"
+        />
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
+          <h1 className="text-white text-4xl lg:text-5xl font-bold">ACERCA DE NOSOTROS</h1>
+        </div>
+      </div>
+
+      {/* Sección azul con texto y logo */}
+      <div className="w-full bg-blue-900 flex flex-col lg:flex-row items-center justify-center px-8 lg:px-32 py-12 gap-10" style={{ backgroundColor: '#0D3B66' }}>
+        {/* Texto */}
+        <div className="lg:w-7/12 text-white text-justify">
+          <p className="text-base leading-7">
+            El grupo semillero (SIIIS) nace desde 2015 con el fin de demostrar actividades de investigación
+            orientadas en la ingeniería de sistemas teniendo en cuenta con la colaboración del grupo de
+            investigación GALASH de la seccional de Sogamoso, por lo tanto, teniendo en cuenta la cantidad
+            de integrantes se creará proyectos de fortalecimiento para las diversas actividades. Es por ello
+            que al tener herramientas tecnológicas de la información y la comunicación (TIC) y de la
+            Transformación Digital, se pretenden orientar a los Estudiantes, Docentes y demás interesados de
+            manera creativa, emocional e innovadora en procesos que se van a desarrollar. Así mismo se cuenta
+            con una Identidad de Marca del Grupo SIIIS para promocionar las investigaciones en curso.
           </p>
         </div>
-        <div className="w-auto self-center">
+
+        {/* Logo */}
+        <div className="flex justify-center items-center">
           <img
-            className="w-full h-full"
+            className="w-52 h-52 object-contain"
             src="https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/image_resource%2Flogo_black.png?alt=media&token=865e49f6-bc1f-46ec-8e4e-923f503f0e96"
-            alt="A group of People"
+            alt="Logo SIIIS"
           />
         </div>
       </div>
 
       {/* Sección de Misión y Visión */}
       <section className="container mx-auto text-center mt-16 mb-12">
-      <div className="w-full mb-5">
+        <div className="w-full mb-5">
           <div className="h-1 mx-auto bg-white w-1/6 opacity-25 rounded-t" />
         </div>
-        
         <Mision_Vision/>
       </section>
 
@@ -99,6 +106,7 @@ const AboutUs = () => {
           </div>
         </div>
       </div>
+
     </div>
   );
 };
