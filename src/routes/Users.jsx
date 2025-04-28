@@ -82,17 +82,19 @@ const Users = () => {
           <h1 className="font-semibold text-blue-900 text-3xl">USUARIOS</h1>
         </div>
 
+        {data[0]?.role === "admin" && (
         <NavLink
-            key="register"
-            to="/register"
-            className="px-3 py-2 rounded-md text-lg font-medium text-[#947646] hover:text-[#7C501C] transition duration-300"
-            style={{backgroundColor: "#F7D467"}} // Color inicial (naranja)
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#F5BC4A")} // Color al pasar el mouse (naranja oscuro)
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#F7D467")} // Vuelve al color original
-            aria-current="page"
+          key="register"
+          to="/register"
+          className="flex items-center justify-center px-3 py-2 rounded-md text-lg font-medium text-[#947646] hover:text-[#7C501C] transition duration-300"
+          style={{backgroundColor: "#F7D467"}}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#F5BC4A")}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#F7D467")}
+          aria-current="page"
         >
           Registrar usuario
         </NavLink>
+        )}
 
         <div className="col-end-7 col-span-2 ...">
           <form>

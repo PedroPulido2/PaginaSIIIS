@@ -39,72 +39,90 @@ const ModalArticlesPerPerson = ({ item, data }) => {
   };
   return (
     <>
-      <div className="flex font-sans border-t-4 border-teal-800 rounded-lg w-full h-full">
-        <div className="flex-none w-1/3 relative">
+      {/* Tarjeta de usuario */}
+      <div className="flex bg-white font-sans border-t-4 border-teal-800 rounded-lg w-full h-full shadow-md hover:shadow-lg transition-shadow duration-300">
+        {/* Sección de imagen */}
+        <div className="flex-none w-1/3 relative min-h-[200px]">
           <button
             onClick={() => setOpen(true)}
             type="button"
-            className="w-full border-t-4 focus:outline-none bg-transparent rounded-lg hover:bg-gray-100  hover:text-amber-400 hover:border-amber-500 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 "
+            className="w-full h-full focus:outline-none bg-transparent rounded-l-lg overflow-hidden hover:opacity-90 transition-opacity"
           >
             <img
               src={item.profileImage}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover shadow-lg shadow-slate-500/50 hover:shadow-gray-800"
+              alt={`Foto de perfil de ${item.name}`}
+              className="absolute inset-0 w-full h-full object-cover"
               loading="lazy"
             />
           </button>
         </div>
 
-        <form className="flex-auto shadow-lg p-6 rounded-r-lg shadow-slate-500/50 w-[calc(100%-200px)]">
-          <div className="flex flex-wrap">
-            <div
-              className="w-full text-lg font-semibold text-slate-500 flex-auto text-right"
-              id={`role-card-${item.id}`}
-            >
+        {/* Sección de contenido */}
+        <div className="flex-auto p-6 w-[calc(100%-200px)]">
+          {/* Encabezado */}
+          <div className="flex justify-between items-start mb-2">
+            <span className="text-lg font-semibold text-slate-500 capitalize">
               {item.role === "user" ? "Usuario" : item.role === "member" ? "Integrante" : "Administrador"}
-            </div>
-            <h1 className="w-full flex-auto text-lg font-semibold text-slate-900 text-center">
-              {item.name + " " + item.lastName}
-            </h1>
-
-            <div className="flex-auto font-semibold text-teal-800 my-6 border-b-2 text-center" style={{ fontSize: "smaller" }}>
-              {item.email}
-            </div>
-
+            </span>
+            
             {!data || data.role !== "admin" ? (
-              <div className="w-full text-center text-sm text-gray-700 font-medium">
-                Estado académico:{" "}
-                <span className="text-teal-700 font-semibold">
-                  {item.academicStatus}
-                </span>
-              </div>
+              <span className={`text-sm font-semibold ${
+                item.academicStatus === 'Activo' ? 'text-teal-700' : 'text-teal-700'
+              }`}>
+                {item.academicStatus}
+              </span>
             ) : null}
           </div>
 
+          {/* Nombre */}
+          <h1 className="text-xl font-bold text-slate-900 mb-2 text-center">
+            {`${item.name} ${item.lastName}`}
+          </h1>
+
+          {/* Email */}
+          <div className="text-teal-800 mb-4 text-center border-b pb-4 text-sm font-medium">
+            {item.email}
+          </div>
+
+          {/* Botón de hoja de vida */}
+          {item.curriculumPDF && (
+            <div className="w-full text-center mb-4">
+              <a 
+                href={item.curriculumPDF} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-block bg-[#00365D] hover:bg-[#00497F] text-white font-bold py-2 px-6 rounded transition-colors duration-200"
+              >
+                Ver hoja de vida
+              </a>
+            </div>
+          )}
+
+          {/* Controles de admin */}
           {data.role === "admin" && (
-            <>
-              <div className="flex space-x-4 mb-6 text-sm font-medium">
-                <div className="flex-auto flex space-x-4">
-                  <SelectRole idUser={item.id} role={item.role} />
-                </div>
-              </div>
-
-              <div className="flex space-x-4 mb-6 text-sm font-medium">
-                <div className="flex-auto flex flex-col space-y-2">
-                  <SelectAcademicStatus idUser={item.id} academicStatus={item.academicStatus} />
-                </div>
-              </div>
-
+            <div className="space-y-4 mt-4">
+              <SelectRole 
+                idUser={item.id} 
+                role={item.role} 
+                className="w-full"
+              />
+              
+              <SelectAcademicStatus 
+                idUser={item.id} 
+                academicStatus={item.academicStatus} 
+                className="w-full"
+              />
+              
               <button
                 className="h-10 w-full font-semibold rounded-md bg-black text-white"
                 type="button"
-                onClick={() => handleClickDelete(item.id, item.userUID)}
+                onClick={() => handleClickDelete(item.id)}
               >
-                Eliminar
+                Eliminar usuario
               </button>
-            </>
+            </div>
           )}
-        </form>
+        </div>
       </div>
 
       <Transition.Root show={open} as={Fragment}>
