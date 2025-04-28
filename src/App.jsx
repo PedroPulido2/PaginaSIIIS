@@ -13,6 +13,7 @@ import Article from "./routes/Article";
 import Profile from "./routes/Profile";
 import Users from "./routes/Users";
 import AboutUs from "./routes/AboutUs";
+import ArticleDetail from "./routes/ArticleDetail";
 
 // import components
 import "flowbite";
@@ -50,7 +51,7 @@ const App = () => {
                 <Route path="/" element={<Home/>}/>
                 <Route path="/AboutUs" element={<AboutUs/>}/>
                 <Route path="/Article" element={<Article/>}/>
-
+                <Route path="/Article/:id" element={<ArticleDetail />} />
                 <Route
                     path="/profile"
                     element={
