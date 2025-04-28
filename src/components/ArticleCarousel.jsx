@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useFirestoreArticles } from "../hooks/useFirestoreArticles";
 import { useFirestore } from "../hooks/useFirestore";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
-import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { useNavigate } from 'react-router-dom';
 
@@ -36,22 +35,25 @@ const ArticleCarousel = () => {
     const getUserById = (userUID) => users.find(u => u.userUID === userUID);
 
     const handleViewArticle = (id) => {
-        navigate(`/Article/${id}`); // corregido
+        navigate(`/Article/${id}`);
     };
 
     const handleViewAllArticles = () => {
-        navigate('/Article'); // corregido
+        navigate('/Article');
     };
 
     return (
-        <div className="py-10 bg-gray-100">
+        <div className="py-10" style={{ backgroundColor: "#FFF9E8" }}>
             <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Artículos</h2>
-            <div className="max-w-7xl mx-auto px-4">
+
+            {/* Contenedor general */}
+            <div className="relative max-w-7xl mx-auto px-4">
+
+                {/* Carrusel */}
                 <Swiper
-                    modules={[Navigation, Pagination, Autoplay]}
+                    modules={[Pagination, Autoplay]}
                     spaceBetween={30}
                     slidesPerView={1}
-                    navigation
                     pagination={{ clickable: true }}
                     autoplay={{ delay: 5000 }}
                     breakpoints={{
@@ -59,6 +61,7 @@ const ArticleCarousel = () => {
                         768: { slidesPerView: 2 },
                         1024: { slidesPerView: 3 },
                     }}
+                    className="!overflow-visible custom-swiper-pagination"
                 >
                     {articles.map((article) => {
                         const user = getUserById(article.userUID);
@@ -89,7 +92,13 @@ const ArticleCarousel = () => {
                                         <div className="mt-4 text-center">
                                             <button
                                                 onClick={() => handleViewArticle(article.id)}
-                                                className="px-6 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition"
+                                                className="px-6 py-2 rounded-lg transition"
+                                                style={{
+                                                    backgroundColor: "#9B6A2F",
+                                                    color: "#ffffff",
+                                                }}
+                                                onMouseOver={(e) => (e.target.style.backgroundColor = "#805325")}
+                                                onMouseOut={(e) => (e.target.style.backgroundColor = "#9B6A2F")}
                                             >
                                                 Leer artículo
                                             </button>
@@ -101,15 +110,22 @@ const ArticleCarousel = () => {
                     })}
                 </Swiper>
 
-                {/* Botón Ver todos los artículos */}
-                <div className="mt-8 text-center">
-                    <button
-                        onClick={handleViewAllArticles}
-                        className="px-8 py-3 bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 transition"
-                    >
-                        Ver más artículos
-                    </button>
-                </div>
+            </div>
+
+            {/* Botón Ver más */}
+            <div className="mt-8 text-center">
+                <button
+                    onClick={handleViewAllArticles}
+                    className="px-8 py-3 font-semibold rounded-lg transition"
+                    style={{
+                        backgroundColor: "#9B6A2F",
+                        color: "#ffffff",
+                    }}
+                    onMouseOver={(e) => (e.target.style.backgroundColor = "#805325")}
+                    onMouseOut={(e) => (e.target.style.backgroundColor = "#9B6A2F")}
+                >
+                    Ver más artículos
+                </button>
             </div>
         </div>
     );
