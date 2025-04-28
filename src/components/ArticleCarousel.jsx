@@ -6,12 +6,14 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { useNavigate } from 'react-router-dom';
 
 const ArticleCarousel = () => {
     const { getDataArticles, loadingArticle } = useFirestoreArticles();
     const { getDataUsers, loading } = useFirestore();
     const [articles, setArticles] = useState([]);
     const [users, setUsers] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -25,7 +27,7 @@ const ArticleCarousel = () => {
 
     if (loadingArticle.getDataArticles || loading.getDataUsers) {
         return (
-            <div className="text-center text-gray-500 text-xl font-bold h-screen">
+            <div className="text-center text-gray-500 text-xl font-bold h-screen flex items-center justify-center">
                 Cargando artículos...
             </div>
         );
@@ -33,9 +35,17 @@ const ArticleCarousel = () => {
 
     const getUserById = (userUID) => users.find(u => u.userUID === userUID);
 
+    const handleViewArticle = (id) => {
+        navigate(`/Article/${id}`); // corregido
+    };
+
+    const handleViewAllArticles = () => {
+        navigate('/Article'); // corregido
+    };
+
     return (
         <div className="py-10 bg-gray-100">
-            <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Últimos Artículos</h2>
+            <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Artículos</h2>
             <div className="max-w-7xl mx-auto px-4">
                 <Swiper
                     modules={[Navigation, Pagination, Autoplay]}
@@ -54,29 +64,35 @@ const ArticleCarousel = () => {
                         const user = getUserById(article.userUID);
                         return (
                             <SwiperSlide key={article.id}>
-                                <div className="group relative rounded-lg border bg-white shadow hover:shadow-lg transition-all">
-                                    <div className="relative w-full h-60 overflow-hidden rounded-t-lg">
+                                <div className="group relative rounded-lg border bg-white shadow-md">
+                                    <div className="relative w-full h-60 bg-white rounded-t-lg overflow-hidden">
                                         <img
                                             src={article.imageArticle}
                                             alt={article.title}
-                                            className="w-full h-full object-cover"
+                                            className="w-full h-full object-center object-cover"
                                         />
                                     </div>
-                                    <div className="p-4">
-                                        <h3 className="text-lg font-semibold text-gray-800">{article.title}</h3>
-                                        <p className="text-sm text-gray-600 mt-2 line-clamp-3">{article.description}</p>
-                                        <div className="flex items-center mt-4 space-x-3">
-                                            {user?.profileImage && (
-                                                <img
-                                                    src={user.profileImage}
-                                                    alt={user.name}
-                                                    className="w-10 h-10 rounded-full border"
-                                                />
-                                            )}
-                                            <div className="text-sm">
-                                                <p className="font-medium">{user ? `${user.name} ${user.lastName}` : "Desconocido"}</p>
-                                                <p className="text-gray-400">{article.date}</p>
+                                    <div className="rounded-b-lg p-4">
+                                        <h3 className="text-xl font-semibold text-gray-800">{article.title}</h3>
+                                        <p className="text-sm text-gray-600">{article.description}</p>
+                                        <div className="flex items-center mt-2 space-x-4">
+                                            <img
+                                                className="w-10 h-10 border rounded-full"
+                                                src={user?.profileImage}
+                                                alt={user?.name}
+                                            />
+                                            <div>
+                                                <div>{user ? `${user.name} ${user.lastName}` : "Autor desconocido"}</div>
+                                                <div className="text-xs text-gray-400">{article.date}</div>
                                             </div>
+                                        </div>
+                                        <div className="mt-4 text-center">
+                                            <button
+                                                onClick={() => handleViewArticle(article.id)}
+                                                className="px-6 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition"
+                                            >
+                                                Leer artículo
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -84,6 +100,16 @@ const ArticleCarousel = () => {
                         );
                     })}
                 </Swiper>
+
+                {/* Botón Ver todos los artículos */}
+                <div className="mt-8 text-center">
+                    <button
+                        onClick={handleViewAllArticles}
+                        className="px-8 py-3 bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 transition"
+                    >
+                        Ver más artículos
+                    </button>
+                </div>
             </div>
         </div>
     );

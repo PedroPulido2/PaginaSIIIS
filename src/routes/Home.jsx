@@ -283,11 +283,6 @@ const Home = () => {
                     </div>
                 </div>
 
-                {/* Título "Proyectos" */}
-                <div className="bg-[#fffaf0] text-[#7b4a12] rounded-xl mt-10 flex justify-center items-center py-8">
-                  <h2 className="text-4xl font-bold">Proyectos</h2>
-                </div>
-
                 {/* Aquí abajo tu componente grande de artículos */}
                 <ArticleCarousel />
 
