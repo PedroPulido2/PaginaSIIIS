@@ -14,7 +14,7 @@ const navigation = [
     {name: "INICIO", href: "/", current: true},
     {name: "ACERCA DE", href: "/AboutUs", current: false},
     {name: "USUARIOS", href: "/users", current: false},
-    {name: "PROYECTOS", href: "/article", current: false},
+    {name: "ARTÍCULOS", href: "/article", current: false},
     {
         name: "BLOG",
         href: "https://semillerosiiis.blogspot.com/",
