@@ -40,14 +40,15 @@ const Register = () => {
 			const userl = await registerUser(data.email, data.password);
 			if (userl) {
 				await addData({
-					name: "",
-					lastName: "",
-					phone: "",
+					name: data.name,
+					lastName: data.lastName,
+					phone: data.phone,
 					email: data.email,
+					academicStatus: "Activo",
+					role: "user",
 					profileImage: "https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"
 				});
-				await logoutUser();
-				window.location.href = "/login";
+				window.location.href = "/";
 			}
 
 		} catch (error) {

@@ -74,9 +74,22 @@ const UserProvider = (props) => {
   const logoutUser = () => signOut(auth);
 
   // delete user
-  const deleteUserWhitID = () => {
-    const userTest = getAuth().currentUser;
-    return deleteUser(userTest);
+  const deleteUserWithID = async () => {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      
+      if (!user) {
+        throw new Error("No hay usuario autenticado");
+      }
+      
+      await deleteUser(user);
+      console.log("Usuario eliminado correctamente");
+      return true;
+    } catch (error) {
+      console.error("Error al eliminar usuario:", error);
+      throw error; // Re-lanzamos el error para manejo superior
+    }
   };
 
   // delete user whit id
@@ -98,7 +111,7 @@ const UserProvider = (props) => {
         registerUser,
         loginUser,
         logoutUser,
-        deleteUserWhitID,
+        deleteUserWithID,
         resetPassword
       }}
     >
