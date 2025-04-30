@@ -107,7 +107,6 @@ const Profile = () => {
         const hvRef = ref(storage, userData.locationCurriculum);
         await deleteObject(hvRef);
       }
-      await deleteData(userData.id); 
       await deleteDataArticle(userData.id);
       await deleteDataReview(userData.id);
       await deleteUserWithID();
@@ -120,29 +119,35 @@ const Profile = () => {
   };
 
   const fileHandler = async (e) => {
-    if (data[0].locationImage) {
-      // Create a reference to the file to delete
-      const desertRef = ref(storage, data[0].locationImage);
-      // Delete the file
-      await deleteObject(desertRef)
-        .then(() => {
-          // File deleted successfully
-        })
-        .catch((error) => {
-          // Uh-oh, an error occurred!
-        });
-    }
-    setLoadingImage(true);
     const file = e.target.files[0];
+
+    //validacion de archivos
+    if (!file.type.startsWith("image/")) {
+      alert("Por favor selecciona una imagen válida (jpg, png, etc).");
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) { // 2MB
+      alert("La imagen debe pesar menos de 2MB.");
+      return;
+    }
+
+    // Eliminar imagen anterior si existe
+    if (data[0].locationImage) {
+      const desertRef = ref(storage, data[0].locationImage);
+      await deleteObject(desertRef).catch((error) => console.error(error));
+    }
+
+    setLoadingImage(true);
+
     const name_file =
       data[0].name.split(" ").join("") + data[0].userUID.split(" ").join("");
     const storageRef = ref(storage, `profile_images/${name_file}`);
     locationImage.current = `profile_images/${name_file}`;
     await uploadBytes(storageRef, file);
     const url = await getDownloadURL(storageRef);
-    const img = document.getElementById("image-profile");
-    img.src = url;
     imgRef.current = url;
+
     const dataNew = {
       ...data[0],
       profileImage: url,
@@ -153,64 +158,59 @@ const Profile = () => {
   };
 
   const hvHandler = async (e) => {
-    // Eliminar el PDF anterior si existe
-    if (data[0].locationHV) {
-      const desertRef = ref(storage, data[0].locationHV);
-      await deleteObject(desertRef)
-        .then(() => {})
-        .catch((error) => {
-          console.error("Error al eliminar PDF anterior:", error);
-        });
-    }
-  
-    setLoadingImage(true);
     const file = e.target.files[0];
-    
-    // Validar que sea un PDF
+
+    // --- Validación de archivo antes de subirlo ---
     if (file.type !== "application/pdf") {
-      alert("Por favor sube un archivo PDF");
+      alert("Por favor sube un archivo PDF.");
       return;
     }
-  
-    // Crear nombre único para el archivo
-    const name_file = 
-      data[0].name.split(" ").join("") + 
-      data[0].userUID.split(" ").join("") + 
-      "_CV";
-    
+
+    if (file.size > 5 * 1024 * 1024) { // 5MB
+      alert("El archivo PDF debe pesar menos de 5MB.");
+      return;
+    }
+
+    // Eliminar PDF anterior si existe
+    if (data[0].locationHV) {
+      const desertRef = ref(storage, data[0].locationHV);
+      await deleteObject(desertRef).catch((error) => console.error(error));
+    }
+
+    setLoadingImage(true);
+
+    const name_file = data[0].name.split(" ").join("") +
+      data[0].userUID.split(" ").join("") + "_CV";
     const storageRef = ref(storage, `curriculums_users/${name_file}`);
     locationHV.current = `curriculums_users/${name_file}`;
-    
-    // Subir el archivo
     await uploadBytes(storageRef, file);
     const url = await getDownloadURL(storageRef);
-    
-    // Actualizar referencias y datos
     hvRef.current = url;
+
     const dataNew = {
       ...data[0],
       curriculumPDF: url,
       locationCurriculum: locationHV.current,
     };
-  
+
     onSubmit(dataNew);
   };
 
   const deleteResume = async () => {
     if (!data[0]?.locationCurriculum) return;
-  
+
     try {
       // Eliminar el archivo de Storage
       const desertRef = ref(storage, data[0].locationCurriculum);
       await deleteObject(desertRef);
-  
+
       // Actualizar el documento del usuario eliminando los campos del PDF
       const dataNew = {
         ...data[0],
         curriculumPDF: null,
         locationCurriculum: null
       };
-  
+
       await onSubmit(dataNew);
       alert("Hoja de vida eliminada correctamente");
     } catch (error) {
@@ -225,7 +225,9 @@ const Profile = () => {
       <div className="p-6 my-24 w-9/12 ml-auto mr-auto bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
         <div className="grid gap-6 mb-3 lg:grid-cols-4">
           <label className=" col-end-5  text-lg font-semibold text-slate-500 text-right rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500">
-            Rol: {data[0].role === "admin" ? "Administrador" : "Usuario"}{" "}
+            Rol: {data[0].role === "admin" ? "Administrador" : data[0].role === "user" ? "Usuario" : "Integrante"}
+            <br />
+            Estado Academico:{" "}{data[0].academicStatus}
           </label>
         </div>
         {/* --------------------------------------start profile image------------------------------------- */}
@@ -308,7 +310,7 @@ const Profile = () => {
                   />
                 </svg>
               </div>
-              
+
             </label>
 
             <input
@@ -316,6 +318,7 @@ const Profile = () => {
               id="file-input"
               name="image"
               type="file"
+              accept="image/*"
               onChange={fileHandler}
             />
           </figure>
@@ -323,7 +326,7 @@ const Profile = () => {
         {/* Sección para subir hoja de vida */}
         <div className="my-6 p-4 border rounded-lg bg-gray-50">
           <h3 className="text-lg font-medium text-gray-900 mb-3">Hoja de Vida (PDF)</h3>
-          
+
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             {data[0]?.curriculumPDF ? (
               <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-3">
@@ -333,11 +336,11 @@ const Profile = () => {
                   </svg>
                   <span className="text-gray-700">Documento subido</span>
                 </div>
-                
+
                 <div className="flex gap-2">
-                  <a 
-                    href={data[0].curriculumPDF} 
-                    target="_blank" 
+                  <a
+                    href={data[0].curriculumPDF}
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
@@ -360,16 +363,16 @@ const Profile = () => {
                 No hay documento subido
               </div>
             )}
-            
+
             <label className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
               {data[0]?.curriculumPDF ? "Cambiar PDF" : "Subir PDF"}
-              <input 
-                type="file" 
-                className="hidden" 
-                accept="application/pdf" 
+              <input
+                type="file"
+                className="hidden"
+                accept="application/pdf"
                 onChange={hvHandler}
               />
             </label>

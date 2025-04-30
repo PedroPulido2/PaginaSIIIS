@@ -9,8 +9,8 @@ const people = [
   {
     id: 1,
     name: "Usuario",
-    avatar:
-      "https://img2.freepng.es/20180714/ro/kisspng-computer-icons-user-membership-vector-5b498fc76f2a07.4607730515315475914553.jpg",
+    avatar: "https://img.icons8.com/ios-filled/100/000000/user.png",
+
   },
   {
     id: 2,
@@ -41,8 +41,6 @@ const SelectRole = ({ idUser, role }) => {
 
   const handleChange = async (e) => {
     setSelected(e);
-    const role_card = document.getElementById(`role-card-${idUser}`);
-    role_card.innerHTML = e.name;
 
     try {
       await updateRole({ id: idUser, role: e.id === 1 ? "user" : e.id === 2 ? "admin" : "member" });
