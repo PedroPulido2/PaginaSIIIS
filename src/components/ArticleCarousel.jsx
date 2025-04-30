@@ -44,7 +44,7 @@ const ArticleCarousel = () => {
 
     return (
         <div className="py-10" style={{ backgroundColor: "#FFF9E8" }}>
-            <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Artículos</h2>
+            <h2 className="text-3xl font-bold text-center mb-8" style={{ color: "#805325" }}>Proyectos</h2>
 
             {/* Contenedor general */}
             <div className="relative max-w-7xl mx-auto px-4">
@@ -61,12 +61,11 @@ const ArticleCarousel = () => {
                         768: { slidesPerView: 2 },
                         1024: { slidesPerView: 3 },
                     }}
-                    className="!overflow-visible custom-swiper-pagination"
                 >
                     {articles.map((article) => {
                         const user = getUserById(article.userUID);
                         return (
-                            <SwiperSlide key={article.id}>
+                            <SwiperSlide key={article.id} className="overflow-hidden">
                                 <div className="group relative rounded-lg border bg-white shadow-md">
                                     <div className="relative w-full h-60 bg-white rounded-t-lg overflow-hidden">
                                         <img
@@ -100,7 +99,7 @@ const ArticleCarousel = () => {
                                                 onMouseOver={(e) => (e.target.style.backgroundColor = "#805325")}
                                                 onMouseOut={(e) => (e.target.style.backgroundColor = "#9B6A2F")}
                                             >
-                                                Leer artículo
+                                                Leer más
                                             </button>
                                         </div>
                                     </div>
@@ -113,7 +112,7 @@ const ArticleCarousel = () => {
             </div>
 
             {/* Botón Ver más */}
-            <div className="mt-8 text-center">
+            <div className="mt-5 text-center">
                 <button
                     onClick={handleViewAllArticles}
                     className="px-8 py-3 font-semibold rounded-lg transition"
@@ -124,7 +123,7 @@ const ArticleCarousel = () => {
                     onMouseOver={(e) => (e.target.style.backgroundColor = "#805325")}
                     onMouseOut={(e) => (e.target.style.backgroundColor = "#9B6A2F")}
                 >
-                    Ver más artículos
+                    Ver más proyectos
                 </button>
             </div>
         </div>
