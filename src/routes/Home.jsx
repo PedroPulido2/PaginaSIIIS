@@ -286,7 +286,7 @@ const Home = () => {
                 {/* Aquí abajo tu componente grande de artículos */}
                 <ArticleCarousel />
 
-                <div className="flex items-center justify-center p-6">
+                <div className="flex items-center justify-center">
                     {/* Texto */}
                     <div className="w-full bg-[#FCD669] py-6 px-4 text-center">
                         <h2 className="text-[#6B3E00] font-bold text-2xl md:text-3xl mb-4">

@@ -53,10 +53,31 @@ div#imagen:hover p#descripcion {
 
 /* Personalizar los bullets del Swiper */
 .swiper-pagination-bullet {
+    width: 12px; /* valor predeterminado es 8px */
+    height: 12px;
     background-color: #c3ae9c;
     opacity: 1;
+    margin: 0 6px; /* separación entre bullets */
 }
 
 .swiper-pagination-bullet-active {
     background-color: #805325;
+    transform: scale(1.2); /* ligeramente más grande */
+}
+
+/* Asegura que los bullets estén por encima del contenido */
+.swiper-pagination {
+    position: relative;
+    z-index: 10;
+}
+
+/* Opcionalmente evita que el contenido sobresalga */
+.swiper-slide {
+    overflow: hidden;
+}
+
+.swiper-pagination {
+    position: relative;
+    margin-top: 20px;
+    z-index: 10;
 }
