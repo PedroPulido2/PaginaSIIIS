@@ -101,14 +101,19 @@ const Article = ({idPerson}) => {
                     <p className="font-semibold">{article.title}</p>
                     <p className="font-semibold text-slate-200">{article.description}</p>
                     <div className="flex justify-end gap-4 mt-4">
-                        <Modal_Article dataArticle1={article} functionEdit="update"/>
-                        {currentUser && (users.some(u => u.role === "admin" || u.userUID === article.userUID)) && (
-                            <button
-                                onClick={() => handleDelete(article)}
-                                className="py-2 px-5 text-sm font-medium text-gray-900 bg-white rounded-lg border hover:bg-amber-500 hover:text-white"
-                            >
-                                Eliminar
-                            </button>
+                        <div>
+                            <Modal_Article dataArticle1={article} functionEdit="update" />
+                        </div>
+                        {(currentUser?.uid === article.userUID || users.find(u => u.userUID === currentUser?.uid)?.role === "admin") && (
+                            <div>
+                                <button
+                                    onClick={() => handleDelete(article)} // esta sí es tu función definida más arriba
+                                    type="button"
+                                    className="w-full py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-amber-500 hover:text-white focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                                >
+                                    Eliminar
+                                </button>
+                            </div>
                         )}
                     </div>
                     <div className="flex items-center mt-4 space-x-4">

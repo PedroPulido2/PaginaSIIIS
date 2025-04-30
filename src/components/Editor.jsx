@@ -57,10 +57,10 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
 
   useEffect(() => {
     if (!user || !user1) return;
-
+  
     const canEdit =
       (dataArticle1.userUID === user.uid || (user1 && user1.role === "admin") || functionEdit !== "update");
-
+  
     setStateReadOnly(!canEdit);
 
     // 🔥 Si está en modo actualización, la fecha NO se puede editar
@@ -69,7 +69,7 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
     } else {
       setStateReadOnlyDate(false);
     }
-
+  
 
   }, [user, user1, functionEdit, dataArticle1.userUID]);
 
@@ -80,20 +80,17 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
         setUser1(data[0]);
       }
     };
-
+  
     if (user?.uid) {
       fetchUser();
     }
+  }, [user]);
 
-    if (dataArticle1?.imageArticle) {
-      imgRef.current = dataArticle1.imageArticle;
-      locationImage.current = dataArticle1.locationImage || "";
-    } else {
-      imgRef.current =
-        "https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_articles%2FsinImagen.png?alt=media&token=df4c7c05-07c0-4812-a2dc-e9ccc01dc054";
-      locationImage.current = "images_articles/SinImagen.jpg";
-    }
-  }, [user,dataArticle1]);
+  console.log("Usuario que recuperé:", user1);
+  
+  locationImage.current = "images_articles/SinImagen.jpg";
+  imgRef.current =
+    "https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_articles%2FsinImagen.png?alt=media&token=df4c7c05-07c0-4812-a2dc-e9ccc01dc054";
 
 
   // validate form with react-hook-form
