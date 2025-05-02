@@ -44,7 +44,7 @@ const ArticleCarousel = () => {
 
     return (
         <div className="py-10" style={{ backgroundColor: "#FFF9E8" }}>
-            <h2 className="text-3xl font-bold text-center mb-8" style={{ color: "#805325" }}>Proyectos</h2>
+            <h2 className="text-3xl font-bold text-center mb-8" style={{ color: "#805325" }}>Artículos</h2>
 
             {/* Contenedor general */}
             <div className="relative max-w-7xl mx-auto px-4">
@@ -123,7 +123,7 @@ const ArticleCarousel = () => {
                     onMouseOver={(e) => (e.target.style.backgroundColor = "#805325")}
                     onMouseOut={(e) => (e.target.style.backgroundColor = "#9B6A2F")}
                 >
-                    Ver más proyectos
+                    Ver más artículos
                 </button>
             </div>
         </div>
