@@ -52,6 +52,39 @@ const AboutUs = () => {
         <Mision_Vision/>
       </section>
 
+      {/* Director del Semillero */}
+      <section className="w-full flex flex-col md:flex-row items-stretch justify-between px-6 md:px-20 py-6 bg-[#f5d476] gap-4">
+        <div className="w-full md:w-2/3 flex flex-col justify-center">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-1">
+          Director del semillero
+        </h2>
+        <p className="text-xl text-gray-700 font-semibold">
+          Edmundo Arturo Junco Orduz
+        </p>
+        <p className="text-lg text-gray-700 mb-2">
+          Docente UPTC
+        </p>
+
+          <a
+            href="https://www.grupogalash.com/researchers/junco"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-800 font-medium hover:underline"
+          >
+            Leer más
+          </a>
+        </div>
+        <div className="w-full md:w-1/3">
+          <img
+            src="https://www.grupogalash.com/assets/research/EJunco.jpg"
+            alt="Edmundo Arturo Junco Orduz"
+            className="w-full h-full object-cover rounded-lg shadow-md"
+          />
+        </div>
+      </section>
+
+
+
       {/* Integrantes del semillero */}
       <Members />
 
