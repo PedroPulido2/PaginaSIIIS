@@ -91,18 +91,20 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
   const useDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
   const isSmallScreen = window.matchMedia("(max-width: 1023.5px)").matches;
 
-  useEffect(() => {
-    if (!user || !user1) return;
-  
-    const canEdit = (
-      dataArticle1.userUID === user.uid || 
-      (user1 && user1.role === "admin") || 
-      functionEdit !== "update"
-    );
-  
-    setStateReadOnly(!canEdit);
-    setStateReadOnlyDate(functionEdit === "update");
-  }, [user, user1, functionEdit, dataArticle1.userUID]);
+// Modifica el useEffect que controla los estados de edición
+    useEffect(() => {
+      if (!user || !user1) {
+        setStateReadOnly(true);
+        setStateReadOnlyDate(true);
+        return;
+      }
+
+      const isOwnerOrAdmin = dataArticle1.userUID === user.uid || user1?.role === "admin";
+      const canEdit = isOwnerOrAdmin || functionEdit !== "update";
+
+      setStateReadOnly(!canEdit);
+      setStateReadOnlyDate(functionEdit === "update");
+    }, [user, user1, functionEdit, dataArticle1.userUID]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -139,6 +141,7 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
         imageArticle: imgRef.current,
         userUID: functionEdit === "update" ? dataArticle1.userUID : user.uid,
         locationImage: locationImage.current,
+        articleState: data.articleState || "En curso" 
       };
       
       if (functionEdit === "update") {
@@ -284,6 +287,22 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
           </FormInputEditor>
         </div>
 
+        <div>
+          <label htmlFor="articleState" className="block text-lg font-medium text-gray-900 dark:text-gray-400">
+            Estado del artículo
+          </label>
+          <select
+            id="articleState"
+            name="articleState"
+            disabled={stateReadOnly || (!user1?.role === "admin" && dataArticle1.userUID !== user?.uid)}
+            className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-amber-400 focus:border-amber-400 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-amber-400 dark:focus:border-amber-400"
+            defaultValue={dataArticle1.articleState || "En curso"}
+            {...register("articleState")}
+          >
+            <option value="En curso">En curso</option>
+            <option value="Finalizado">Finalizado</option>
+          </select>
+        </div>
         <div className="grid gap-6 my-6">
           <label htmlFor="description" className="block text-lg font-medium text-gray-900 dark:text-gray-400">
             Descripción corta
