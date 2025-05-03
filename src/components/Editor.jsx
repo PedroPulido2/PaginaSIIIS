@@ -9,7 +9,7 @@ import { FormValidate } from "../utils/FormValidate";
 import { useForm } from "react-hook-form";
 
 import firebaseApp from "../Firebase";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { UserContext } from "../context/UserProvider";
 import {
   getFirestore,
@@ -92,6 +92,7 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
   imgRef.current =
     "https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_articles%2FsinImagen.png?alt=media&token=df4c7c05-07c0-4812-a2dc-e9ccc01dc054";
 
+
   // validate form with react-hook-form
   const { required } = FormValidate();
   const {
@@ -137,17 +138,52 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
   };
 
   const fileHandler = async (e) => {
-    setLoadingImage(true);
     const file = e.target.files[0];
-    const name_file = file.name + user.uid;
+  
+    if (!file) {
+      alert("No seleccionaste ningún archivo.");
+      return;
+    }
+  
+    // Validar si es imagen
+    if (!file.type.startsWith("image/")) {
+      alert("Por favor selecciona una imagen válida (jpg, png, etc).");
+      return;
+    }
+  
+    if (file.size > 2 * 1024 * 1024) {
+      alert("La imagen debe pesar menos de 2MB.");
+      return;
+    }
+  
+    // Eliminar imagen anterior si existía
+    if (locationImage.current && locationImage.current !== "images_articles/SinImagen.jpg") {
+      const oldImageRef = ref(storage, locationImage.current);
+      await deleteObject(oldImageRef).catch((error) => console.warn("No se pudo eliminar imagen anterior:", error));
+    }
+  
+    setLoadingImage(true);
+  
+    const name_file = `${file.name.split(" ").join("")}_${user.uid}`;
     const storageRef = ref(storage, `images_articles/${name_file}`);
     locationImage.current = `images_articles/${name_file}`;
-    await uploadBytes(storageRef, file);
-    setLoadingImage(false);
-    const url = await getDownloadURL(storageRef);
-    const img = document.getElementById("imageArticle");
-    img.src = url;
-    imgRef.current = url;
+  
+    try {
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+  
+      imgRef.current = url;
+  
+      // Mostrar imagen de inmediato
+      const img = document.getElementById("imageArticle");
+      if (img) img.src = url;
+  
+      setLoadingImage(false);
+    } catch (error) {
+      console.error("Error al subir la imagen:", error);
+      alert("Error al subir la imagen.");
+      setLoadingImage(false);
+    }
   };
 
   const useDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -242,6 +278,7 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
             id="file-input"
             name="image"
             type={stateReadOnly ? "" : "file"}
+            accept="image/*" // <-- Solo permite seleccionar imágenes
             onChange={fileHandler}
           />
         </figure>

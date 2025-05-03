@@ -19,30 +19,30 @@ const ContacUs = () => {
     handleSubmit,
     formState: { errors },
     setError,
+    reset,
   } = useForm();
 
-  // useState hook
-  const sendEmail = (event) => {
-    event.preventDefault();
+  const sendEmail = async (data, event) => {
     try {
-      emailjs.sendForm('service_f3257sq','template_fxqjp1f',event.target,'2Zgc6yupq1YAQYEjZ')
-      .then(response=> 
-
-        alert("Mensaje enviado")
-
-        )
-      .catch(
-        error=> console.log("Error al enviar el mensaje. ERROR:",error)
-        )
-      // window.location.href = "/";
+      const result = await emailjs.sendForm(
+        'service_f3257sq',
+        'template_fxqjp1f',
+        event.target,
+        '2Zgc6yupq1YAQYEjZ'
+      );
+      alert("Mensaje enviado");
+      reset(); // se limpia el formulario SOLO si fue exitoso
     } catch (error) {
+      console.log("Error al enviar el mensaje. ERROR:", error);
       const { code, message } = ErrorsFirebase(error.code);
       setError(code, { message });
     }
   };
+
+
   return (
     <>
-    <FormErrors error={errors.errorIntern} />
+      <FormErrors error={errors.errorIntern} />
       <section>
         <div className="py-8 lg:py-16 px-4 mx-auto max-w-screen-md">
           <h1 className="mb-5 text-6xl tracking-tight font-semibold text-center text-gray-700 dark:text-white">
@@ -52,7 +52,7 @@ const ContacUs = () => {
             ¿Tienes un problema técnico? ¿Quieres enviar tus comentarios?
             ¿Necesitas información sobre nuestro semillero? Háganoslo saber.
           </p>
-          <form className="space-y-8" onSubmit={sendEmail}>
+          <form className="space-y-8" onSubmit={handleSubmit(sendEmail)}>
             <FormInput
               type="emailContact"
               placeholder=""
