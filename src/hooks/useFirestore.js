@@ -27,12 +27,22 @@ export const useFirestore = () => {
       setLoading((prev) => ({ ...prev, getData: true }));
 
       const dataRef = collection(db, "users");
+
       if (auth.currentUser) {
+        // Si hay usuario logueado, trae solo su información
         const filterQuery = query(
-          dataRef,
-          where("userUID", "==", auth.currentUser.uid)
+            dataRef,
+            where("userUID", "==", auth.currentUser.uid)
         );
         const querySnapshot = await getDocs(filterQuery);
+        const dataDb = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        return dataDb;
+      } else {
+        // Si NO hay usuario logueado, trae todos los usuarios
+        const querySnapshot = await getDocs(dataRef);
         const dataDb = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
