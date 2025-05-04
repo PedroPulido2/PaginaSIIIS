@@ -100,10 +100,10 @@ const ContacUs = () => {
                 })}
               />
             </div>
-            <div className="flex flex-row-reverse ...">
+            <div className="flex justify-end">
               <button
                 type="submit"
-                className="py-3 px-5 text-sm font-medium text-center border border-amber-400 text-amber-500 rounded-lg bg-primary-700 sm:w-fit hover:bg-primary-800 focus:ring-4 focus:outline-none hover:bg-amber-400 hover:text-white focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                className="px-6 py-3 text-sm font-medium text-white bg-amber-500 border border-amber-500 rounded-lg hover:bg-amber-600 transition"
               >
                 Enviar mensaje
               </button>
