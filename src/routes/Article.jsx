@@ -101,19 +101,6 @@ const Article = ({idPerson}) => {
                     <p className="font-semibold">{article.title}</p>
                     <p className="font-semibold text-slate-200">{article.description}</p>
 
-                    {/* Estado del artículo */}
-                    <div className="mt-2">
-                    <span
-                        className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-2
-                            ${article.articleState === 'Finalizado'
-                            ? 'bg-green-200 text-green-800'
-                            : 'bg-yellow-200 text-yellow-800'
-                        }`}
-                    >
-                        {article.articleState}
-                    </span>
-                    </div>
-
                     <div className="flex justify-end gap-4 mt-4">
                         <div>
                             <Modal_Article dataArticle1={article} functionEdit="update" />
@@ -140,6 +127,18 @@ const Article = ({idPerson}) => {
                             <div>{user ? `${user.name} ${user.lastName}` : "Usuario desconocido"}</div>
                             <div className="text-sm text-gray-300">{article.date}</div>
                         </div>
+                    </div>
+                    {/* Estado del artículo */}
+                    <div className="mt-2">
+                    <span
+                        className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-2
+                            ${article.articleState === 'Finalizado'
+                            ? 'bg-green-200 text-green-800'
+                            : 'bg-yellow-200 text-yellow-800'
+                        }`}
+                    >
+                        {article.articleState}
+                    </span>
                     </div>
                 </div>
             </div>
