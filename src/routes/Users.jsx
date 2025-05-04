@@ -74,7 +74,6 @@ const Users = () => {
     });
   };
 
-
   return (
     <div className="flex flex-col p-4 pt-14 bg-white">
       <div className="grid grid-cols-6 gap-4 p-6">

@@ -221,38 +221,44 @@ const Home = () => {
                 {/* SIIIS */}
                 <div className="flex flex-wrap justify-center gap-4 p-4">
                     {/* Card 1 */}
-                    <div className="bg-[#F7D467] hover:bg-[#F5BC4A] border-2 border-[#947646] rounded-lg p-4 w-72 h-80 shadow-md flex flex-col items-center transition-colors duration-300 group space-y-4">
+                    <div
+                        className="bg-[#F7D467] hover:bg-[#F5BC4A] border-2 border-[#947646] rounded-lg p-4 w-72 h-80 shadow-md flex flex-col items-center transition-colors duration-300 group space-y-4">
                         <h2 className="text-8xl font-bold text-[#7C501C] group-hover:text-[#5A3210] transition-colors duration-300">S</h2>
                         <p className="text-2xl text-[#947646] group-hover:text-[#5A3210] transition-colors duration-300">emillero</p>
-                        <img src="https://i.imgur.com/cR8iV6g.png" className="w-32 h-32 object-contain" />
+                        <img src="https://i.imgur.com/cR8iV6g.png" className="w-32 h-32 object-contain"/>
                     </div>
 
                     {/* Card 2 */}
-                    <div className="bg-[#F7D467] hover:bg-[#F5BC4A] border-2 border-[#947646] rounded-lg p-4 w-72 h-80 shadow-md flex flex-col items-center transition-colors duration-300 group space-y-4">
+                    <div
+                        className="bg-[#F7D467] hover:bg-[#F5BC4A] border-2 border-[#947646] rounded-lg p-4 w-72 h-80 shadow-md flex flex-col items-center transition-colors duration-300 group space-y-4">
                         <h2 className="text-8xl font-bold text-[#7C501C] group-hover:text-[#5A3210] transition-colors duration-300">I</h2>
                         <p className="text-2xl text-[#947646] group-hover:text-[#5A3210] transition-colors duration-300">nvestigación</p>
-                        <img src="https://i.imgur.com/eMIinFD.png" className="w-32 h-32 object-contain" />
+                        <img src="https://i.imgur.com/eMIinFD.png" className="w-32 h-32 object-contain"/>
                     </div>
 
                     {/* Card 3 */}
-                    <div className="bg-[#F7D467] hover:bg-[#F5BC4A] border-2 border-[#947646] rounded-lg p-4 w-72 h-80 shadow-md flex flex-col items-center transition-colors duration-300 group space-y-4">
+                    <div
+                        className="bg-[#F7D467] hover:bg-[#F5BC4A] border-2 border-[#947646] rounded-lg p-4 w-72 h-80 shadow-md flex flex-col items-center transition-colors duration-300 group space-y-4">
                         <h2 className="text-8xl font-bold text-[#7C501C] group-hover:text-[#5A3210] transition-colors duration-300">I</h2>
                         <p className="text-2xl text-[#947646] group-hover:text-[#5A3210] transition-colors duration-300">nnovación</p>
-                        <img src="https://i.imgur.com/VQPRV1y.png" className="w-32 h-32 object-contain" />
+                        <img src="https://i.imgur.com/VQPRV1y.png" className="w-32 h-32 object-contain"/>
                     </div>
 
                     {/* Card 4 */}
-                    <div className="bg-[#F7D467] hover:bg-[#F5BC4A] border-2 border-[#947646] rounded-lg p-4 w-72 h-80 shadow-md flex flex-col items-center transition-colors duration-300 group space-y-4">
+                    <div
+                        className="bg-[#F7D467] hover:bg-[#F5BC4A] border-2 border-[#947646] rounded-lg p-4 w-72 h-80 shadow-md flex flex-col items-center transition-colors duration-300 group space-y-4">
                         <h2 className="text-8xl font-bold text-[#7C501C] group-hover:text-[#5A3210] transition-colors duration-300">I</h2>
                         <p className="text-2xl text-[#947646] group-hover:text-[#5A3210] transition-colors duration-300">ngeniería</p>
-                        <img src="https://i.imgur.com/Fio9MvZ.png" alt="Ingeniería" className="w-32 h-32 object-contain" />
+                        <img src="https://i.imgur.com/Fio9MvZ.png" alt="Ingeniería"
+                             className="w-32 h-32 object-contain"/>
                     </div>
 
                     {/* Card 5 */}
-                    <div className="bg-[#F7D467] hover:bg-[#F5BC4A] border-2 border-[#947646] rounded-lg p-4 w-72 h-80 shadow-md flex flex-col items-center transition-colors duration-300 group space-y-4">
+                    <div
+                        className="bg-[#F7D467] hover:bg-[#F5BC4A] border-2 border-[#947646] rounded-lg p-4 w-72 h-80 shadow-md flex flex-col items-center transition-colors duration-300 group space-y-4">
                         <h2 className="text-8xl font-bold text-[#7C501C] group-hover:text-[#5A3210] transition-colors duration-300">S</h2>
                         <p className="text-2xl text-[#947646] group-hover:text-[#5A3210] transition-colors duration-300">istemas</p>
-                        <img src="https://i.imgur.com/uRRGblH.png" alt="Sistemas" className="w-32 h-32 object-contain" />
+                        <img src="https://i.imgur.com/uRRGblH.png" alt="Sistemas" className="w-32 h-32 object-contain"/>
                     </div>
                 </div>
 
@@ -284,7 +290,7 @@ const Home = () => {
                 </div>
 
                 {/* Aquí abajo tu componente grande de artículos */}
-                <ArticleCarousel />
+                <ArticleCarousel/>
 
                 <div className="flex items-center justify-center">
                     {/* Texto */}
