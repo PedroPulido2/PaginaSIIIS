@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useFirestoreArticles } from "../hooks/useFirestoreArticles";
-import { useFirestore } from "../hooks/useFirestore";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Autoplay } from "swiper/modules";
+import React, {useEffect, useState} from "react";
+import {useFirestoreArticles} from "../hooks/useFirestoreArticles";
+import {useFirestore} from "../hooks/useFirestore";
+import {Swiper, SwiperSlide} from "swiper/react";
+import {Pagination, Autoplay} from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 const ArticleCarousel = () => {
-    const { getDataArticles, loadingArticle } = useFirestoreArticles();
-    const { getDataUsers, loading } = useFirestore();
+    const {getDataArticles, loadingArticle} = useFirestoreArticles();
+    const {getDataUsers, loading} = useFirestore();
     const [articles, setArticles] = useState([]);
     const [users, setUsers] = useState([]);
     const navigate = useNavigate();
@@ -43,8 +43,8 @@ const ArticleCarousel = () => {
     };
 
     return (
-        <div className="py-10" style={{ backgroundColor: "#FFF9E8" }}>
-            <h2 className="text-3xl font-bold text-center mb-8" style={{ color: "#805325" }}>Artículos</h2>
+        <div className="py-10" style={{backgroundColor: "#FFF9E8"}}>
+            <h2 className="text-3xl font-bold text-center mb-8" style={{color: "#805325"}}>Artículos</h2>
 
             {/* Contenedor general */}
             <div className="relative max-w-7xl mx-auto px-4">
@@ -54,12 +54,12 @@ const ArticleCarousel = () => {
                     modules={[Pagination, Autoplay]}
                     spaceBetween={30}
                     slidesPerView={1}
-                    pagination={{ clickable: true }}
-                    autoplay={{ delay: 5000 }}
+                    pagination={{clickable: true}}
+                    autoplay={{delay: 5000}}
                     breakpoints={{
-                        640: { slidesPerView: 1 },
-                        768: { slidesPerView: 2 },
-                        1024: { slidesPerView: 3 },
+                        640: {slidesPerView: 1},
+                        768: {slidesPerView: 2},
+                        1024: {slidesPerView: 3},
                     }}
                 >
                     {articles.map((article) => {
@@ -76,6 +76,7 @@ const ArticleCarousel = () => {
                                     </div>
                                     <div className="rounded-b-lg p-4">
                                         <h3 className="text-xl font-semibold text-gray-800">{article.title}</h3>
+
                                         <p className="text-sm text-gray-600">{article.description}</p>
                                         <div className="flex items-center mt-2 space-x-4">
                                             <img
@@ -88,6 +89,15 @@ const ArticleCarousel = () => {
                                                 <div className="text-xs text-gray-400">{article.date}</div>
                                             </div>
                                         </div>
+                                        <div className="mt-2">
+                                            <span
+                                                className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-2
+                                                    ${article.articleState === 'Finalizado' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'}`}
+                                            >
+                                                {article.articleState}
+                                            </span>
+                                        </div>
+
                                         <div className="mt-4 text-center">
                                             <button
                                                 onClick={() => handleViewArticle(article.id)}

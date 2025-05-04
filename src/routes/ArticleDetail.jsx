@@ -17,7 +17,6 @@ const ArticleDetail = () => {
             const articles = await getDataArticles();
             const foundArticle = articles.find((a) => a.id === id);
             if (foundArticle) {
-                // Sanitiza el contenido al momento de traerlo
                 foundArticle.safeContent = DOMPurify.sanitize(foundArticle.content);
                 setArticle(foundArticle);
 
@@ -37,14 +36,26 @@ const ArticleDetail = () => {
         );
     }
 
+    const statusClass =
+        article.articleState === "Finalizado"
+            ? "bg-green-200 text-green-800"
+            : "bg-yellow-200 text-yellow-800";
+
     return (
         <div className="max-w-4xl mx-auto px-4 py-10">
+            {/* Estado del artículo */}
+            <div className={`inline-block px-3 py-1 rounded-full text-sm font-semibold mb-4 ${statusClass}`}>
+                {article.articleState}
+            </div>
+
             <h1 className="text-4xl font-bold text-gray-800 mb-6">{article.title}</h1>
+
             <img
                 src={article.imageArticle}
                 alt={article.title}
                 className="w-full h-96 object-cover rounded-lg mb-6"
             />
+
             <div
                 className="text-gray-700 text-lg"
                 dangerouslySetInnerHTML={{ __html: article.safeContent }}
