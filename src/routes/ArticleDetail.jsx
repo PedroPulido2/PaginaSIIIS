@@ -1,22 +1,33 @@
-// src/routes/ArticleDetail.jsx
-
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useFirestoreArticles } from "../hooks/useFirestoreArticles"; // Ajusta si tienes un hook similar
+import DOMPurify from "dompurify";  // <---- IMPORTANTE
+import { useFirestoreArticles } from "../hooks/useFirestoreArticles";
+import { useFirestore } from "../hooks/useFirestore";
 
 const ArticleDetail = () => {
     const { id } = useParams();
     const { getDataArticles } = useFirestoreArticles();
+    const { getDataUsers } = useFirestore();
+
     const [article, setArticle] = useState(null);
+    const [author, setAuthor] = useState(null);
 
     useEffect(() => {
-        const fetchArticle = async () => {
+        const fetchArticleAndAuthor = async () => {
             const articles = await getDataArticles();
             const foundArticle = articles.find((a) => a.id === id);
-            setArticle(foundArticle);
+            if (foundArticle) {
+                // Sanitiza el contenido al momento de traerlo
+                foundArticle.safeContent = DOMPurify.sanitize(foundArticle.content);
+                setArticle(foundArticle);
+
+                const users = await getDataUsers();
+                const foundUser = users.find((u) => u.userUID === foundArticle.userUID);
+                setAuthor(foundUser);
+            }
         };
-        fetchArticle();
-    }, [id, getDataArticles]);
+        fetchArticleAndAuthor();
+    }, [id, getDataArticles, getDataUsers]);
 
     if (!article) {
         return (
@@ -34,8 +45,31 @@ const ArticleDetail = () => {
                 alt={article.title}
                 className="w-full h-96 object-cover rounded-lg mb-6"
             />
-            <p className="text-gray-700 text-lg">{article.description}</p>
-            <p className="text-gray-400 text-sm mt-4">{article.date}</p>
+            <div
+                className="text-gray-700 text-lg"
+                dangerouslySetInnerHTML={{ __html: article.safeContent }}
+            ></div>
+
+            {author ? (
+                <div className="flex items-center space-x-4 mt-5">
+                    <img
+                        className="w-12 h-12 border rounded-full"
+                        src={author.profileImage}
+                        alt={`${author.name} ${author.lastName}`}
+                    />
+                    <div>
+                        <div className="font-semibold text-gray-800">
+                            {author.name} {author.lastName}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                            {author.role || "Autor"}
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <div className="text-gray-500 text-sm">Autor desconocido</div>
+            )}
+            <p className="text-gray-400 text-sm mb-8 mt-2">{article.date}</p>
         </div>
     );
 };
