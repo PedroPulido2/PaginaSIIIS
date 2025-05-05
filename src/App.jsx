@@ -51,7 +51,7 @@ const App = () => {
                 <Route path="/" element={<Home/>}/>
                 <Route path="/AboutUs" element={<AboutUs/>}/>
                 <Route path="/Article" element={<Article/>}/>
-                <Route path="/Article/:id" element={<ArticleDetail />} />
+                <Route path="/Article/:id" element={<ArticleDetail/>}/>
                 <Route
                     path="/profile"
                     element={
@@ -63,9 +63,7 @@ const App = () => {
                 <Route
                     path="/users"
                     element={
-                        <RequireAuth>
-                            <Users/>
-                        </RequireAuth>
+                        <Users/>
                     }
                 />
                 <Route path="/forgot-password" element={<ForgotPassword/>}/>
