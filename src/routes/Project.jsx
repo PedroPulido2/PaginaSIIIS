@@ -98,12 +98,20 @@ const Project = ({idPerson}) => {
                     />
                 </div>
                 <div className="rounded-b-lg w-full p-4 bg-gray-800 text-white">
+                    {/* CATEGORÍA al inicio */}
+                    <div className="mb-2">
+                    <span
+                        className="inline-block px-3 py-1 rounded-full bg-blue-200 text-blue-800 text-xs font-semibold">
+                        {project.projectCategory}
+                    </span>
+                    </div>
+
                     <p className="font-semibold">{project.title}</p>
                     <p className="font-semibold text-slate-200">{project.description}</p>
 
                     <div className="flex justify-end gap-4 mt-4">
                         <div>
-                            <Modal_Project dataProject1={project} functionEdit="update" />
+                            <Modal_Project dataProject1={project} functionEdit="update"/>
                         </div>
                         {(currentUser?.uid === project.userUID || users.find(u => u.userUID === currentUser?.uid)?.role === "admin") && (
                             <div>
@@ -117,6 +125,7 @@ const Project = ({idPerson}) => {
                             </div>
                         )}
                     </div>
+
                     <div className="flex items-center mt-4 space-x-4">
                         <img
                             className="w-10 h-10 border rounded-full"
@@ -128,13 +137,18 @@ const Project = ({idPerson}) => {
                             <div className="text-sm text-gray-300">{project.date}</div>
                         </div>
                     </div>
-                    {/* Estado del proyecto */}
-                    <div className="mt-2">
+
+                    {/* ESTADO al final con colores */}
+                    <div className="mt-4 flex justify-end">
                     <span
-                        className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-2
+                        className={`inline-block px-3 py-1 rounded-full text-xs font-semibold
                             ${project.projectState === 'Terminado'
                             ? 'bg-green-200 text-green-800'
-                            : 'bg-yellow-200 text-yellow-800'
+                            : project.projectState === 'Aprobado'
+                                ? 'bg-yellow-200 text-yellow-800'
+                                : project.projectState === 'En espera de aprobación'
+                                    ? 'bg-red-200 text-red-800'
+                                    : 'bg-gray-200 text-gray-800'
                         }`}
                     >
                         {project.projectState}

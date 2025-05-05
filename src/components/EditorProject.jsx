@@ -54,6 +54,9 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
     const [stateReadOnly, setStateReadOnly] = useState(true); // 👈 lo dejamos de entrada en true
     const [stateReadOnlyDate, setStateReadOnlyDate] = useState(false); // 👈 lo dejamos de entrada en true
 
+    const generateId = () => {
+        return crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 22);
+    };
 
     useEffect(() => {
         if (!user || !user1) return;
@@ -87,10 +90,15 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
     }, [user]);
 
     console.log("Usuario que recuperé:", user1);
-
-    locationImage.current = "images_projects/SinImagen.jpg";
-    imgRef.current =
-        "https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_projects%2FsinImagen.png?alt=media&token=b7f1da2e-ee80-406f-b26a-47f3a493dcd2";
+    useEffect(() => {
+        if (functionEdit === "update" && dataProject1.imageProject && dataProject1.locationImage) {
+            imgRef.current = dataProject1.imageProject;
+            locationImage.current = dataProject1.locationImage;
+        } else {
+            locationImage.current = "images_projects/SinImagen.jpg";
+            imgRef.current = "https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_projects%2FsinImagen.png?alt=media&token=b7f1da2e-ee80-406f-b26a-47f3a493dcd2";
+        }
+    }, [functionEdit, dataProject1]);
 
     // validate form with react-hook-form
     const { required } = FormValidate();
@@ -118,6 +126,7 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
         const dataNew = {
             ...dataProject1,
             ...data,
+            id: functionEdit === "update" ? dataProject1.id : generateId(),
             imageProject: imgRef.current,
             userUID: functionEdit === "update" ? dataProject1.userUID : user.uid,
             locationImage: locationImage.current,
@@ -317,6 +326,40 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
                         <FormErrors error={errors.name} />
                     </FormInputEditor>
                 </div>
+
+                <div className="mb-4">
+                    <label htmlFor="projectCategory" className="block mb-1">Categoría</label>
+                    <select
+                        id="projectCategory"
+                        {...register("projectCategory", { required })}
+                        defaultValue={dataProject1.projectCategory || "Software"}
+                        disabled={stateReadOnly}
+                        className="w-full p-2 border rounded"
+                    >
+                        <option value="Software">Software</option>
+                        <option value="Telecomunicaciones">Telecomunicaciones</option>
+                        <option value="Inteligencia Artificial">Inteligencia Artificial</option>
+                        <option value="Otra">Otra</option>
+                    </select>
+                    <FormErrors error={errors.projectCategory} />
+                </div>
+
+                <div className="mb-4">
+                    <label htmlFor="projectState" className="block mb-1">Estado</label>
+                    <select
+                        id="projectState"
+                        {...register("projectState", { required })}
+                        defaultValue={dataProject1.projectState || "En espera de aprobación"}
+                        disabled={stateReadOnly}
+                        className="w-full p-2 border rounded"
+                    >
+                        <option value="Terminado">Terminado</option>
+                        <option value="Aprobado">Aprobado</option>
+                        <option value="En espera de aprobación">En espera de aprobación</option>
+                    </select>
+                    <FormErrors error={errors.projectState} />
+                </div>
+
                 <div className="grid gap-6 my-6 ">
                     <label
                         htmlFor="description"
