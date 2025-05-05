@@ -75,7 +75,7 @@ const Modal_Article = ({ dataArticle1, functionEdit }) => {
                           </p>
 
                           <EditorTiny
-                            dataProject1={dataArticle1}
+                            dataArticle1={dataArticle1}
                             functionEdit={functionEdit}
                           />
                         </div>
