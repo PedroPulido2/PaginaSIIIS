@@ -42,7 +42,7 @@ const getDataUserId = async (userUID) => {
   }
 };
 
-const EditorTiny = ({ dataArticle1, functionEdit }) => {
+const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
 
   const { user } = useContext(UserContext);
   const [user1, setUser1] = useState(null);
@@ -59,7 +59,7 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
     if (!user || !user1) return;
   
     const canEdit =
-      (dataArticle1.userUID === user.uid || (user1 && user1.role === "admin") || functionEdit !== "update");
+      (dataProject1.userUID === user.uid || (user1 && user1.role === "admin") || functionEdit !== "update");
   
     setStateReadOnly(!canEdit);
 
@@ -71,7 +71,7 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
     }
   
 
-  }, [user, user1, functionEdit, dataArticle1.userUID]);
+  }, [user, user1, functionEdit, dataProject1.userUID]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -117,10 +117,10 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
   const onSubmit = async (data) => {
     data.content = editorRef.current.getContent();
     const dataNew = {
-      ...dataArticle1,
+      ...dataProject1,
       ...data,
       imageArticle: imgRef.current,
-      userUID: functionEdit === "update" ? dataArticle1.userUID : user.uid,
+      userUID: functionEdit === "update" ? dataProject1.userUID : user.uid,
       locationImage: locationImage.current,
     };
     try {
@@ -290,7 +290,7 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
           <FormInputEditor
             type="text"
             // placeholder={dataArticle1.title}
-            value={dataArticle1.title}
+            value={dataProject1.title}
             label="Título"
             htmlFor="title"
             name="title"
@@ -305,7 +305,7 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
           <FormInputEditor
             type="date"
             // placeholder={dataArticle1.date}
-            value={dataArticle1.date}
+            value={dataProject1.date}
             label="Fecha"
             htmlFor="date"
             name="date"
@@ -332,7 +332,7 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
             readOnly={stateReadOnly}
             className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-amber-400 focus:border-amber-400 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-amber-400 dark:focus:border-amber-400"
             placeholder="Ejemplo: 'Relata historia de machine learning desde sus inicios hasta la actualidad'"
-            defaultValue={dataArticle1.description}
+            defaultValue={dataProject1.description}
             {...register("description", {
               required,
             })}
@@ -344,12 +344,12 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
         </label>
 
         {/* -------------EDITOR----------------------------------------------------------------------------------------- */}
-        {dataArticle1.userUID === user.uid || (user1 && user1.role === "admin") || functionEdit !== "update" ? (
+        {dataProject1.userUID === user.uid || (user1 && user1.role === "admin") || functionEdit !== "update" ? (
           <>
             <Editor
               apiKey="xa7jibfvgt9hh2wyjzamlbtt8cq0hjb0niph3zn58qelqrnh"
               onInit={(evt, editor) => (editorRef.current = editor)}
-              initialValue={dataArticle1.content}
+              initialValue={dataProject1.content}
               init={{
                 selector: "textarea#open-source-plugins",
                 plugins:
@@ -452,7 +452,7 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
             {/* convert html */}
             <div
               className="mt-1"
-              dangerouslySetInnerHTML={{ __html: dataArticle1.content }}
+              dangerouslySetInnerHTML={{ __html: dataProject1.content }}
             ></div>
           </>
         )}
