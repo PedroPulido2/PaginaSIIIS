@@ -21,6 +21,7 @@ import {
 import Article from "./Article";
 import { useFirestoreArticles } from "../hooks/useFirestoreArticles";
 import { useFirestoreReviews } from "../hooks/useFirestoreReviews";
+import Project from "./Project";
 
 const storage = getStorage(firebaseApp);
 
@@ -538,6 +539,7 @@ const Profile = () => {
         </Transition.Root>
       </div>
       <Article idPerson={data[0].userUID} />
+      <Project idPerson={data[0].userUID} />
     </>
   );
 };

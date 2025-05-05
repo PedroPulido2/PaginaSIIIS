@@ -42,8 +42,8 @@ const getDataUserId = async (userUID) => {
   }
 };
 
-const EditorTiny = ({ dataArticle1, functionEdit }) => {
-  const defaultImage = "https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_articles%2FsinImagen.png?alt=media&token=df4c7c05-07c0-4812-a2dc-e9ccc01dc054";
+const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
+
   const { user } = useContext(UserContext);
   const [user1, setUser1] = useState(null);
   const [loadingImage, setLoadingImage] = useState(false);
@@ -53,58 +53,22 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
   const locationImage = useRef("images_articles/SinImagen.jpg");
 
   useEffect(() => {
-    if (dataArticle1?.imageArticle) {
-      imgRef.current = dataArticle1.imageArticle;
-      
-      const imgElement = document.getElementById("imageArticle");
-      if (imgElement) {
-        imgElement.src = dataArticle1.imageArticle;
-      }
-    } else {
-      imgRef.current = defaultImage;
-      
-      const imgElement = document.getElementById("imageArticle");
-      if (imgElement) {
-        imgElement.src = defaultImage;
-      }
-    }
-    
-    if (dataArticle1?.locationImage) {
-      locationImage.current = dataArticle1.locationImage;
-    }
-  }, [dataArticle1]);
-
-  const {
-    dataArticle,
-    loadingArticle,
-    getDataArticles,
-    getDataArticleUser,
-    addDataArticle,
-    deleteDataArticle,
-    updateDataArticle, // Ahora está disponible en todo el componente
-  } = useFirestoreArticles();
+    if (!user || !user1) return;
   
-  const [stateReadOnly, setStateReadOnly] = useState(true);
-  const [stateReadOnlyDate, setStateReadOnlyDate] = useState(true);
+    const canEdit =
+      (dataProject1.userUID === user.uid || (user1 && user1.role === "admin") || functionEdit !== "update");
+  
+    setStateReadOnly(!canEdit);
 
-  // Configuración del editor
-  const useDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const isSmallScreen = window.matchMedia("(max-width: 1023.5px)").matches;
+    // 🔥 Si está en modo actualización, la fecha NO se puede editar
+    if (functionEdit === "update") {
+      setStateReadOnlyDate(true);
+    } else {
+      setStateReadOnlyDate(false);
+    }
+  
 
-// Modifica el useEffect que controla los estados de edición
-    useEffect(() => {
-      if (!user || !user1) {
-        setStateReadOnly(true);
-        setStateReadOnlyDate(true);
-        return;
-      }
-
-      const isOwnerOrAdmin = dataArticle1.userUID === user.uid || user1?.role === "admin";
-      const canEdit = isOwnerOrAdmin || functionEdit !== "update";
-
-      setStateReadOnly(!canEdit);
-      setStateReadOnlyDate(functionEdit === "update");
-    }, [user, user1, functionEdit, dataArticle1.userUID]);
+  }, [user, user1, functionEdit, dataProject1.userUID]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -133,18 +97,16 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
   } = useForm();
 
   const onSubmit = async (data) => {
+    data.content = editorRef.current.getContent();
+    const dataNew = {
+      ...dataProject1,
+      ...data,
+      imageArticle: imgRef.current,
+      userUID: functionEdit === "update" ? dataProject1.userUID : user.uid,
+      locationImage: locationImage.current,
+    };
     try {
-      data.content = editorRef.current?.getContent() || "";
-      const dataNew = {
-        ...dataArticle1,
-        ...data,
-        imageArticle: imgRef.current,
-        userUID: functionEdit === "update" ? dataArticle1.userUID : user.uid,
-        locationImage: locationImage.current,
-        articleState: data.articleState || "En curso" 
-      };
-      
-      if (functionEdit === "update") {
+      if (functionEdit == "update") {
         await updateDataArticle(dataNew);
       } else {
         await addDataArticle(dataNew);
@@ -262,7 +224,8 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
         <div className="grid gap-6 my-6 lg:grid-cols-2">
           <FormInputEditor
             type="text"
-            value={dataArticle1.title}
+            // placeholder={dataArticle1.title}
+            value={dataProject1.title}
             label="Título"
             htmlFor="title"
             name="title"
@@ -275,7 +238,8 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
 
           <FormInputEditor
             type="date"
-            value={dataArticle1.date}
+            // placeholder={dataArticle1.date}
+            value={dataProject1.date}
             label="Fecha"
             htmlFor="date"
             name="date"
@@ -314,23 +278,24 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
             readOnly={stateReadOnly}
             className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-amber-400 focus:border-amber-400 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-amber-400 dark:focus:border-amber-400"
             placeholder="Ejemplo: 'Relata historia de machine learning desde sus inicios hasta la actualidad'"
-            defaultValue={dataArticle1.description}
-            {...register("description", { required })}
-          />
-          <FormErrors error={errors.description} />
+            defaultValue={dataProject1.description}
+            {...register("description", {
+              required,
+            })}
+          ></textarea>
         </div>
 
         <label className="block m text-lg font-medium text-gray-900 dark:text-gray-400">
           Contenido
         </label>
 
-        {/* Editor TinyMCE */}
-        {!stateReadOnly ? (
+        {/* -------------EDITOR----------------------------------------------------------------------------------------- */}
+        {dataProject1.userUID === user.uid || (user1 && user1.role === "admin") || functionEdit !== "update" ? (
           <>
-          <Editor
-            apiKey={import.meta.env.VITE_TINYMCE_API_KEY || "xa7jibfvgt9hh2wyjzamlbtt8cq0hjb0niph3zn58qelqrnh"}
-            onInit={(evt, editor) => (editorRef.current = editor)}
-              initialValue={dataArticle1.content}
+            <Editor
+              apiKey="xa7jibfvgt9hh2wyjzamlbtt8cq0hjb0niph3zn58qelqrnh"
+              onInit={(evt, editor) => (editorRef.current = editor)}
+              initialValue={dataProject1.content}
               init={{
                 plugins: [
                   'preview', 'importcss', 'searchreplace', 'autolink', 'autosave', 'save', 'directionality', 'code',
@@ -368,10 +333,13 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
             </div>
           </>
         ) : (
-          <div
-            className="mt-1 prose max-w-none dark:prose-invert"
-            dangerouslySetInnerHTML={{ __html: dataArticle1.content }}
-          />
+          <>
+            {/* convert html */}
+            <div
+              className="mt-1"
+              dangerouslySetInnerHTML={{ __html: dataProject1.content }}
+            ></div>
+          </>
         )}
       </form>
     </>
