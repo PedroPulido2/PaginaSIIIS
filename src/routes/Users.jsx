@@ -5,13 +5,12 @@ import ModalArticlesPerPerson from "../components/ModalArticlesPerPeson";
 import { useFirestore } from "../hooks/useFirestore";
 import { ErrorsFirebase } from "../utils/ErrorsFirebase";
 import SelectRole from "../components/SelectRole";
-import {NavLink} from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const Users = () => {
   const { loading, getData, getDataUsers, deleteData } = useFirestore();
   const [data, setData] = useState([]);
   const [dataUsers, setDataUsers] = useState([]);
-
 
   const reducer = (state, action) => {
     switch (action.type) {
@@ -20,7 +19,8 @@ const Users = () => {
           const filter = action.payload.filter.toLowerCase();
           return (
             user.name.toLowerCase().includes(filter) ||
-            (user.academicStatus && user.academicStatus.toLowerCase().includes(filter))
+            (user.academicStatus &&
+              user.academicStatus.toLowerCase().includes(filter))
           );
         });
       case "all":
@@ -39,13 +39,9 @@ const Users = () => {
       setData(data);
       setDataUsers(
         dataUsers.sort((a, b) => {
-          if (a.role === "admin" && b.role !== "admin") {
-            return -1;
-          } else if (a.role !== "admin" && b.role === "admin") {
-            return 1;
-          } else {
-            return 0;
-          }
+          if (a.role === "admin" && b.role !== "admin") return -1;
+          if (a.role !== "admin" && b.role === "admin") return 1;
+          return 0;
         })
       );
     };
@@ -74,40 +70,48 @@ const Users = () => {
     });
   };
 
-
   return (
     <div className="flex flex-col p-4 pt-14 bg-white">
-      <div className="grid grid-cols-6 gap-4 p-6">
-        <div className="col-start-1 col-end-3 ...">
-          <h1 className="font-semibold text-blue-900 text-3xl">USUARIOS</h1>
+      {/* Encabezado responsive */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4 p-6 items-center">
+        <div className="col-span-1 sm:col-span-2 md:col-start-1 md:col-end-3">
+          <h1 className="font-semibold text-blue-900 text-3xl text-center md:text-left">
+            USUARIOS
+          </h1>
         </div>
 
         {data[0]?.role === "admin" && (
-        <NavLink
-          key="register"
-          to="/register"
-          className="flex items-center justify-center px-3 py-2 rounded-md text-lg font-medium text-[#947646] hover:text-[#7C501C] transition duration-300"
-          style={{backgroundColor: "#F7D467"}}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#F5BC4A")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#F7D467")}
-          aria-current="page"
-        >
-          Registrar usuario
-        </NavLink>
+          <div className="col-span-1 sm:col-span-2 text-center">
+            <NavLink
+              key="register"
+              to="/register"
+              className="inline-block px-4 py-2 rounded-md text-lg font-medium text-[#947646] hover:text-[#7C501C] transition duration-300"
+              style={{ backgroundColor: "#F7D467" }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor = "#F5BC4A")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = "#F7D467")
+              }
+              aria-current="page"
+            >
+              Registrar usuario
+            </NavLink>
+          </div>
         )}
 
-        <div className="col-end-7 col-span-2 ...">
+        <div className="col-span-1 sm:col-span-2 md:col-end-7 md:col-span-2">
           <form>
             <label
               htmlFor="default-search"
-              className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300"
+              className="mb-2 text-sm font-medium text-gray-900 sr-only"
             >
               Buscar
             </label>
             <div className="relative">
               <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                 <svg
-                  className="w-5 h-5 text-gray-500 dark:text-gray-400"
+                  className="w-5 h-5 text-gray-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -124,9 +128,9 @@ const Users = () => {
               <input
                 type="search"
                 id="default-search"
-                className="block p-4 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Busqueda..."
-                required=""
+                className="block w-full p-4 pl-10 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Buscar..."
+                required
                 onChange={handleSearch}
               />
             </div>
@@ -134,6 +138,7 @@ const Users = () => {
         </div>
       </div>
 
+      {/* Lista de usuarios */}
       <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-1 gap-x-8 lg:grid-cols-2 xl:grid-cols-3 xl:gap-x-8">
         {state.map((item) => (
           <div key={item.id}>
@@ -144,4 +149,5 @@ const Users = () => {
     </div>
   );
 };
+
 export default Users;

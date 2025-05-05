@@ -158,7 +158,7 @@ const Article = ({idPerson}) => {
                             </div>
                         </form>
                     </div>
-                    <div className="hidden w-full md:flex md:w-auto md:order-1" id="navbar-search">
+                    <div className="w-full flex flex-col md:flex-row md:w-auto md:order-1" id="navbar-search">
                         <ul className="flex flex-col md:flex-row md:space-x-8">
                             <li>
                                 <a href="/Article" className="text-amber-500 font-bold text-xl">ARTÍCULOS</a>
