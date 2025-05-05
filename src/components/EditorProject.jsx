@@ -54,10 +54,6 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
     const [stateReadOnly, setStateReadOnly] = useState(true); // 👈 lo dejamos de entrada en true
     const [stateReadOnlyDate, setStateReadOnlyDate] = useState(false); // 👈 lo dejamos de entrada en true
 
-    const generateId = () => {
-        return crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 22);
-    };
-
     useEffect(() => {
         if (!user || !user1) return;
 
@@ -126,7 +122,6 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
         const dataNew = {
             ...dataProject1,
             ...data,
-            id: functionEdit === "update" ? dataProject1.id : generateId(),
             imageProject: imgRef.current,
             userUID: functionEdit === "update" ? dataProject1.userUID : user.uid,
             locationImage: locationImage.current,
@@ -332,10 +327,8 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
                     <select
                         id="projectCategory"
                         {...register("projectCategory", { required })}
-                        defaultValue={dataProject1.projectCategory || "Software"}
-                        disabled={stateReadOnly}
-                        className="w-full p-2 border rounded"
                     >
+                        <option value="">Seleccione una categoría</option>
                         <option value="Software">Software</option>
                         <option value="Telecomunicaciones">Telecomunicaciones</option>
                         <option value="Inteligencia Artificial">Inteligencia Artificial</option>
@@ -349,10 +342,8 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
                     <select
                         id="projectState"
                         {...register("projectState", { required })}
-                        defaultValue={dataProject1.projectState || "En espera de aprobación"}
-                        disabled={stateReadOnly}
-                        className="w-full p-2 border rounded"
                     >
+                        <option value="">Seleccione un estado</option>
                         <option value="Terminado">Terminado</option>
                         <option value="Aprobado">Aprobado</option>
                         <option value="En espera de aprobación">En espera de aprobación</option>
