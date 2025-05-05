@@ -52,7 +52,7 @@ const Project = ({idPerson}) => {
 
     if (
         loading.getDataUsers ||
-        loadingProject.getDataProject ||
+        loadingProject.getDataProjects ||
         (loadingProject.getDataProjects === undefined && loading.getDataUsers)
     ) {
         return (
