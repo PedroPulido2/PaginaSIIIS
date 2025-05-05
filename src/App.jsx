@@ -10,6 +10,7 @@ import Register from "./routes/Register";
 import Home from "./routes/Home";
 import NotFound from "./routes/NotFound";
 import Article from "./routes/Article";
+import Project from "./routes/Project";
 import Profile from "./routes/Profile";
 import Users from "./routes/Users";
 import AboutUs from "./routes/AboutUs";
@@ -51,6 +52,7 @@ const App = () => {
                 <Route path="/" element={<Home/>}/>
                 <Route path="/AboutUs" element={<AboutUs/>}/>
                 <Route path="/Article" element={<Article/>}/>
+                <Route path="/Project" element={<Project/>}/>
                 <Route path="/Article/:id" element={<ArticleDetail/>}/>
                 <Route
                     path="/profile"
