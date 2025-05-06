@@ -42,8 +42,8 @@ const getDataUserId = async (userUID) => {
   }
 };
 
-const EditorTiny = ({ dataArticle1: dataArticle1, functionEdit }) => {
-
+const EditorTiny = ({ dataArticle1, functionEdit }) => {
+  const defaultImage = "https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_articles%2FsinImagen.png?alt=media&token=df4c7c05-07c0-4812-a2dc-e9ccc01dc054";
   const { user } = useContext(UserContext);
   const [user1, setUser1] = useState(null);
   const [loadingImage, setLoadingImage] = useState(false);
@@ -53,22 +53,58 @@ const EditorTiny = ({ dataArticle1: dataArticle1, functionEdit }) => {
   const locationImage = useRef("images_articles/SinImagen.jpg");
 
   useEffect(() => {
-    if (!user || !user1) return;
-  
-    const canEdit =
-      (dataArticle1.userUID === user.uid || (user1 && user1.role === "admin") || functionEdit !== "update");
-  
-    setStateReadOnly(!canEdit);
-
-    // 🔥 Si está en modo actualización, la fecha NO se puede editar
-    if (functionEdit === "update") {
-      setStateReadOnlyDate(true);
+    if (dataArticle1?.imageArticle) {
+      imgRef.current = dataArticle1.imageArticle;
+      
+      const imgElement = document.getElementById("imageArticle");
+      if (imgElement) {
+        imgElement.src = dataArticle1.imageArticle;
+      }
     } else {
-      setStateReadOnlyDate(false);
+      imgRef.current = defaultImage;
+      
+      const imgElement = document.getElementById("imageArticle");
+      if (imgElement) {
+        imgElement.src = defaultImage;
+      }
     }
-  
+    
+    if (dataArticle1?.locationImage) {
+      locationImage.current = dataArticle1.locationImage;
+    }
+  }, [dataArticle1]);
 
-  }, [user, user1, functionEdit, dataArticle1.userUID]);
+  const {
+    dataArticle,
+    loadingArticle,
+    getDataArticles,
+    getDataArticleUser,
+    addDataArticle,
+    deleteDataArticle,
+    updateDataArticle, // Ahora está disponible en todo el componente
+  } = useFirestoreArticles();
+  
+  const [stateReadOnly, setStateReadOnly] = useState(true);
+  const [stateReadOnlyDate, setStateReadOnlyDate] = useState(true);
+
+  // Configuración del editor
+  const useDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const isSmallScreen = window.matchMedia("(max-width: 1023.5px)").matches;
+
+// Modifica el useEffect que controla los estados de edición
+    useEffect(() => {
+      if (!user || !user1) {
+        setStateReadOnly(true);
+        setStateReadOnlyDate(true);
+        return;
+      }
+
+      const isOwnerOrAdmin = dataArticle1.userUID === user.uid || user1?.role === "admin";
+      const canEdit = isOwnerOrAdmin || functionEdit !== "update";
+
+      setStateReadOnly(!canEdit);
+      setStateReadOnlyDate(functionEdit === "update");
+    }, [user, user1, functionEdit, dataArticle1.userUID]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -87,21 +123,7 @@ const EditorTiny = ({ dataArticle1: dataArticle1, functionEdit }) => {
     }
   }, [user]);
 
-  console.log("Usuario que recuperé:", user1);
-  useEffect(() => {
-    if (functionEdit === "update" && dataArticle1.imageArticle && dataArticle1.locationImage) {
-      imgRef.current = dataArticle1.imageArticle;
-      locationImage.current = dataArticle1.locationImage;
-    } else {
-      locationImage.current = "images_articles/SinImagen.jpg";
-      imgRef.current = "https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_articles%2FsinImagen.png?alt=media&token=df4c7c05-07c0-4812-a2dc-e9ccc01dc054";
-    }
-  }, [functionEdit, dataArticle1]);
-
-  
-
-
-  // validate form with react-hook-form
+  // Form handling
   const { required } = FormValidate();
   const {
     register,
@@ -111,16 +133,18 @@ const EditorTiny = ({ dataArticle1: dataArticle1, functionEdit }) => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    data.content = editorRef.current.getContent();
-    const dataNew = {
-      ...dataArticle1,
-      ...data,
-      imageArticle: imgRef.current,
-      userUID: functionEdit === "update" ? dataArticle1.userUID : user.uid,
-      locationImage: locationImage.current,
-    };
     try {
-      if (functionEdit == "update") {
+      data.content = editorRef.current?.getContent() || "";
+      const dataNew = {
+        ...dataArticle1,
+        ...data,
+        imageArticle: imgRef.current,
+        userUID: functionEdit === "update" ? dataArticle1.userUID : user.uid,
+        locationImage: locationImage.current,
+        articleState: data.articleState || "En curso" 
+      };
+      
+      if (functionEdit === "update") {
         await updateDataArticle(dataNew);
       } else {
         await addDataArticle(dataNew);
@@ -238,7 +262,6 @@ const EditorTiny = ({ dataArticle1: dataArticle1, functionEdit }) => {
         <div className="grid gap-6 my-6 lg:grid-cols-2">
           <FormInputEditor
             type="text"
-            // placeholder={dataArticle1.title}
             value={dataArticle1.title}
             label="Título"
             htmlFor="title"
@@ -252,7 +275,6 @@ const EditorTiny = ({ dataArticle1: dataArticle1, functionEdit }) => {
 
           <FormInputEditor
             type="date"
-            // placeholder={dataArticle1.date}
             value={dataArticle1.date}
             label="Fecha"
             htmlFor="date"
@@ -293,22 +315,21 @@ const EditorTiny = ({ dataArticle1: dataArticle1, functionEdit }) => {
             className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-amber-400 focus:border-amber-400 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-amber-400 dark:focus:border-amber-400"
             placeholder="Ejemplo: 'Relata historia de machine learning desde sus inicios hasta la actualidad'"
             defaultValue={dataArticle1.description}
-            {...register("description", {
-              required,
-            })}
-          ></textarea>
+            {...register("description", { required })}
+          />
+          <FormErrors error={errors.description} />
         </div>
 
         <label className="block m text-lg font-medium text-gray-900 dark:text-gray-400">
           Contenido
         </label>
 
-        {/* -------------EDITOR----------------------------------------------------------------------------------------- */}
-        {dataArticle1.userUID === user.uid || (user1 && user1.role === "admin") || functionEdit !== "update" ? (
+        {/* Editor TinyMCE */}
+        {!stateReadOnly ? (
           <>
-            <Editor
-              apiKey="xa7jibfvgt9hh2wyjzamlbtt8cq0hjb0niph3zn58qelqrnh"
-              onInit={(evt, editor) => (editorRef.current = editor)}
+          <Editor
+            apiKey={import.meta.env.VITE_TINYMCE_API_KEY || "xa7jibfvgt9hh2wyjzamlbtt8cq0hjb0niph3zn58qelqrnh"}
+            onInit={(evt, editor) => (editorRef.current = editor)}
               initialValue={dataArticle1.content}
               init={{
                 plugins: [
@@ -347,13 +368,10 @@ const EditorTiny = ({ dataArticle1: dataArticle1, functionEdit }) => {
             </div>
           </>
         ) : (
-          <>
-            {/* convert html */}
-            <div
-              className="mt-1"
-              dangerouslySetInnerHTML={{ __html: dataArticle1.content }}
-            ></div>
-          </>
+          <div
+            className="mt-1 prose max-w-none dark:prose-invert"
+            dangerouslySetInnerHTML={{ __html: dataArticle1.content }}
+          />
         )}
       </form>
     </>

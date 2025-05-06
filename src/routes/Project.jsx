@@ -1,13 +1,13 @@
-import React, {useEffect, useState, useReducer} from "react";
-import {useForm} from "react-hook-form";
-import {useFirestore} from "../hooks/useFirestore";
-import {useFirestoreProjects} from "../hooks/useFirestoreProjects";
-import {ErrorsFirebase} from "../utils/ErrorsFirebase";
-import {getStorage, ref, deleteObject} from "firebase/storage";
+import React, { useEffect, useState, useReducer } from "react";
+import { useForm } from "react-hook-form";
+import { useFirestore } from "../hooks/useFirestore";
+import { useFirestoreProjects } from "../hooks/useFirestoreProjects";
+import { ErrorsFirebase } from "../utils/ErrorsFirebase";
+import { getStorage, ref, deleteObject } from "firebase/storage";
 import Modal_Project from "../components/Modal_Project";
-import {getAuth} from "firebase/auth";
+import { getAuth } from "firebase/auth";
 
-const Project = ({idPerson}) => {
+const Project = ({ idPerson }) => {
     const auth = getAuth();
     const currentUser = auth.currentUser;
     const {
@@ -22,16 +22,40 @@ const Project = ({idPerson}) => {
         getData,
     } = useFirestore();
 
-    const {setError} = useForm();
+    const { setError } = useForm();
 
     const [users, setUsers] = useState([]);
     const [allProjects, setAllProjects] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+
     const [projectsFiltered, dispatch] = useReducer((state, action) => {
         switch (action.type) {
             case "filter":
-                return action.payload.data.filter(project =>
-                    project.title.toLowerCase().includes(action.payload.filter.toLowerCase())
-                );
+                return action.payload.data.filter(project => {
+                    const searchLower = action.payload.filter.toLowerCase();
+                    const inTitle = project.title.toLowerCase().includes(searchLower);
+                    const inCategory = project.projectCategory.toLowerCase().includes(searchLower);
+                    const inState = project.projectState.toLowerCase().includes(searchLower);
+
+                    const isStateSearch =
+                        searchLower.includes("aprobado") ||
+                        searchLower.includes("en espera de aprobación") ||
+                        searchLower.includes("terminado");
+
+                    const isCategorySearch =
+                        searchLower.includes("Software") ||
+                        searchLower.includes("Telecomunicaciones") ||
+                        searchLower.includes("Inteligencia Artificial") ||
+                        searchLower.includes("Otra");
+
+                    if (isStateSearch) {
+                        return inState;
+                    }
+                    if (isCategorySearch) {
+                        return inCategory;
+                    }
+                    return inTitle || inCategory || inState;
+                });
             case "all":
                 return action.payload;
             default:
@@ -45,7 +69,7 @@ const Project = ({idPerson}) => {
             const projectsData = await getDataProjects();
             setUsers(usersData);
             setAllProjects(projectsData);
-            dispatch({type: "all", payload: projectsData});
+            dispatch({ type: "all", payload: projectsData });
         };
         fetchData();
     }, []);
@@ -70,17 +94,19 @@ const Project = ({idPerson}) => {
             await deleteObject(imageRef);
             window.location.reload(); // opcional: reemplazar por manejo de estado
         } catch (error) {
-            const {code, message} = ErrorsFirebase(error.code);
-            setError(code, {message});
+            const { code, message } = ErrorsFirebase(error.code);
+            setError(code, { message });
         }
     };
 
     const handleSearch = (e) => {
+        const searchValue = e.target.value;
+        setSearchTerm(searchValue);
         dispatch({
             type: "filter",
             payload: {
-                filter: e.target.value,
-                data: allProjects,
+                filter: searchValue,
+                data: allProjects
             },
         });
     };
@@ -100,10 +126,10 @@ const Project = ({idPerson}) => {
                 <div className="rounded-b-lg w-full p-4 bg-gray-800 text-white">
                     {/* CATEGORÍA al inicio */}
                     <div className="mb-2">
-                    <span
-                        className="inline-block px-3 py-1 rounded-full bg-blue-200 text-blue-800 text-xs font-semibold">
-                        {project.projectCategory}
-                    </span>
+                        <span
+                            className="inline-block px-3 py-1 rounded-full bg-blue-200 text-blue-800 text-xs font-semibold">
+                            {project.projectCategory}
+                        </span>
                     </div>
 
                     <p className="font-semibold">{project.title}</p>
@@ -111,7 +137,7 @@ const Project = ({idPerson}) => {
 
                     <div className="flex justify-end gap-4 mt-4">
                         <div>
-                            <Modal_Project dataProject1={project} functionEdit="update"/>
+                            <Modal_Project dataProject1={project} functionEdit="update" />
                         </div>
                         {(currentUser?.uid === project.userUID || users.find(u => u.userUID === currentUser?.uid)?.role === "admin") && (
                             <div>
@@ -140,19 +166,19 @@ const Project = ({idPerson}) => {
 
                     {/* ESTADO al final con colores */}
                     <div className="mt-4 flex justify-end">
-                    <span
-                        className={`inline-block px-3 py-1 rounded-full text-xs font-semibold
+                        <span
+                            className={`inline-block px-3 py-1 rounded-full text-xs font-semibold
                             ${project.projectState === 'Terminado'
-                            ? 'bg-green-200 text-green-800'
-                            : project.projectState === 'Aprobado'
-                                ? 'bg-yellow-200 text-yellow-800'
-                                : project.projectState === 'En espera de aprobación'
-                                    ? 'bg-red-200 text-red-800'
-                                    : 'bg-gray-200 text-gray-800'
-                        }`}
-                    >
-                        {project.projectState}
-                    </span>
+                                    ? 'bg-green-200 text-green-800'
+                                    : project.projectState === 'Aprobado'
+                                        ? 'bg-yellow-200 text-yellow-800'
+                                        : project.projectState === 'En espera de aprobación'
+                                            ? 'bg-red-200 text-red-800'
+                                            : 'bg-gray-200 text-gray-800'
+                                }`}
+                        >
+                            {project.projectState}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -170,17 +196,18 @@ const Project = ({idPerson}) => {
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3">
                                     <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor"
-                                         viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                     </svg>
                                 </div>
                                 <input
                                     type="search"
                                     id="search"
+                                    value={searchTerm}
                                     onChange={handleSearch}
                                     className="block p-4 pl-10 w-full text-sm bg-gray-50 border rounded-lg"
-                                    placeholder="Buscar proyectos..."
+                                    placeholder="Buscar por título, categoría o estado"
                                 />
                             </div>
                         </form>
@@ -192,7 +219,7 @@ const Project = ({idPerson}) => {
                             </li>
                             {currentUser && (
                                 <li>
-                                    <Modal_Project dataProject1 functionEdit="create"/>
+                                    <Modal_Project dataProject1 functionEdit="create" />
                                 </li>
                             )}
                         </ul>

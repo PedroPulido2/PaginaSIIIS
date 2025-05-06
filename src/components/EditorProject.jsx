@@ -127,7 +127,7 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
             locationImage: locationImage.current,
         };
         try {
-            if (functionEdit == "update") {
+            if (functionEdit === "update") {
                 await updateDataProject(dataNew);
             } else {
                 await addDataProject(dataNew);
@@ -141,50 +141,56 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
     };
 
     const fileHandler = async (e) => {
-        const file = e.target.files[0];
-
-        if (!file) {
-            alert("No seleccionaste ningún archivo.");
-            return;
-        }
-
-        // Validar si es imagen
-        if (!file.type.startsWith("image/")) {
-            alert("Por favor selecciona una imagen válida (jpg, png, etc).");
-            return;
-        }
-
-        if (file.size > 2 * 1024 * 1024) {
-            alert("La imagen debe pesar menos de 2MB.");
-            return;
-        }
-
-        // Eliminar imagen anterior si existía
-        if (locationImage.current && locationImage.current !== "images_projects/SinImagen.jpg") {
-            const oldImageRef = ref(storage, locationImage.current);
-            await deleteObject(oldImageRef).catch((error) => console.warn("No se pudo eliminar imagen anterior:", error));
-        }
-
-        setLoadingImage(true);
-
-        const name_file = `${file.name.split(" ").join("")}_${user.uid}`;
-        const storageRef = ref(storage, `images_projects/${name_file}`);
-        locationImage.current = `images_projects/${name_file}`;
-
         try {
+            const file = e.target.files[0];
+
+            if (!file) {
+                alert("No seleccionaste ningún archivo.");
+                return;
+            }
+
+            // Validar si es imagen
+            if (!file.type.startsWith("image/")) {
+                alert("Por favor selecciona una imagen válida (jpg, png, etc).");
+                return;
+            }
+
+            if (file.size > 2 * 1024 * 1024) {
+                alert("La imagen debe pesar menos de 2MB.");
+                return;
+            }
+
+            // Eliminar imagen anterior si existía
+            if (locationImage.current && locationImage.current !== "images_projects/SinImagen.jpg") {
+                try {
+                    const oldImageRef = ref(storage, locationImage.current);
+                    await deleteObject(oldImageRef);
+                } catch (error) {
+                    console.warn("No se pudo eliminar imagen anterior:", error);
+                }
+            }
+
+            setLoadingImage(true);
+
+            const name_file = `${Date.now()}_${file.name.replace(/\s+/g, "")}`;
+            const storageRef = ref(storage, `images_projects/${name_file}`);
+            //locationImage.current = `images_projects/${name_file}`;
+
             await uploadBytes(storageRef, file);
             const url = await getDownloadURL(storageRef);
 
+            //Actualiza referencias
             imgRef.current = url;
+            locationImage.current = `images_projects/${name_file}`;
 
             // Mostrar imagen de inmediato
             const img = document.getElementById("imageProject");
             if (img) img.src = url;
 
-            setLoadingImage(false);
         } catch (error) {
             console.error("Error al subir la imagen:", error);
-            alert("Error al subir la imagen.");
+            alert("Error al subir la imagen. Por favor intenta de nuevo.");
+        } finally {
             setLoadingImage(false);
         }
     };
@@ -327,6 +333,8 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
                     <select
                         id="projectCategory"
                         {...register("projectCategory", { required })}
+                        defaultValue={dataProject1.projectCategory}
+                        className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-amber-400 focus:border-amber-400 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-amber-400 dark:focus:border-amber-400"
                     >
                         <option value="">Seleccione una categoría</option>
                         <option value="Software">Software</option>
@@ -342,6 +350,8 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
                     <select
                         id="projectState"
                         {...register("projectState", { required })}
+                        defaultValue={dataProject1.projectState}
+                        className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-amber-400 focus:border-amber-400 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-amber-400 dark:focus:border-amber-400"
                     >
                         <option value="">Seleccione un estado</option>
                         <option value="Terminado">Terminado</option>
