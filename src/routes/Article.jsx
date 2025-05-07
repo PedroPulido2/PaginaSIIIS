@@ -6,6 +6,7 @@ import { ErrorsFirebase } from "../utils/ErrorsFirebase";
 import { getStorage, ref, deleteObject } from "firebase/storage";
 import Modal_Article from "../components/Modal_Article";
 import { getAuth } from "firebase/auth";
+import { getDownloadURL } from "firebase/storage";
 
 const Article = ({ idPerson }) => {
     const auth = getAuth();
@@ -13,6 +14,7 @@ const Article = ({ idPerson }) => {
     const { loadingArticle, getDataArticles, deleteDataArticle } = useFirestoreArticles();
     const { loading, getDataUsers, getData } = useFirestore();
     const { setError } = useForm();
+    const [bannerUrl, setBannerUrl] = useState('');
 
     const [users, setUsers] = useState([]);
     const [allArticles, setAllArticles] = useState([]);
@@ -50,6 +52,18 @@ const Article = ({ idPerson }) => {
             // Extraer años únicos
             const years = [...new Set(articlesData.map(article => article.date.slice(0,4)))];
             setUniqueYears(years.sort((a, b) => b - a));
+
+            //imagen banner
+            const storage = getStorage();
+            const bannerRef = ref(storage, 'images_banner/articulos.jpeg');
+
+            getDownloadURL(bannerRef)
+                .then((url) => {
+                    setBannerUrl(url);
+                })
+                .catch((error) => {
+                    console.error('Error al obtener la imagen del banner:', error);
+                });
         };
         fetchData();
     }, []);
@@ -185,7 +199,7 @@ const Article = ({ idPerson }) => {
             <div className="relative w-full h-80 overflow-hidden">
                 <img
                     className="w-full h-full object-cover object-center"
-                    src="https://i.imgur.com/wVn9tnw.jpeg"
+                    src={bannerUrl || "https://via.placeholder.com/1200x400?text=Banner"}
                     alt="Fondo SIIIS"
                 />
                 <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
