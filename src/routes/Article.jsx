@@ -1,31 +1,23 @@
-import React, {useEffect, useState, useReducer} from "react";
-import {useForm} from "react-hook-form";
-import {useFirestore} from "../hooks/useFirestore";
-import {useFirestoreArticles} from "../hooks/useFirestoreArticles";
-import {ErrorsFirebase} from "../utils/ErrorsFirebase";
-import {getStorage, ref, deleteObject} from "firebase/storage";
+import React, { useEffect, useState, useReducer } from "react";
+import { useForm } from "react-hook-form";
+import { useFirestore } from "../hooks/useFirestore";
+import { useFirestoreArticles } from "../hooks/useFirestoreArticles";
+import { ErrorsFirebase } from "../utils/ErrorsFirebase";
+import { getStorage, ref, deleteObject } from "firebase/storage";
 import Modal_Article from "../components/Modal_Article";
-import {getAuth} from "firebase/auth";
+import { getAuth } from "firebase/auth";
 
 const Article = ({ idPerson }) => {
     const auth = getAuth();
     const currentUser = auth.currentUser;
-    const {
-        loadingArticle,
-        getDataArticles,
-        deleteDataArticle,
-    } = useFirestoreArticles();
-
-    const {
-        loading,
-        getDataUsers,
-        getData,
-    } = useFirestore();
-
+    const { loadingArticle, getDataArticles, deleteDataArticle } = useFirestoreArticles();
+    const { loading, getDataUsers, getData } = useFirestore();
     const { setError } = useForm();
 
     const [users, setUsers] = useState([]);
     const [allArticles, setAllArticles] = useState([]);
+    const [estadoFilter, setEstadoFilter] = useState('');
+    const [anioFilter, setAnioFilter] = useState('');
     const [articlesFiltered, dispatch] = useReducer((state, action) => {
         switch (action.type) {
             case "filter":
@@ -34,10 +26,18 @@ const Article = ({ idPerson }) => {
                 );
             case "all":
                 return action.payload;
+            case "customFilter":
+                return action.payload.data.filter(article => {
+                    const matchEstado = action.payload.estado ? article.articleState.toLowerCase() === action.payload.estado.toLowerCase() : true;
+                    const matchAnio = action.payload.anio ? article.date.includes(action.payload.anio) : true;
+                    return matchEstado && matchAnio;
+                });
             default:
                 return state;
         }
     }, []);
+
+    const [uniqueYears, setUniqueYears] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -46,6 +46,10 @@ const Article = ({ idPerson }) => {
             setUsers(usersData);
             setAllArticles(articlesData);
             dispatch({ type: "all", payload: articlesData });
+
+            // Extraer años únicos
+            const years = [...new Set(articlesData.map(article => article.date.slice(0,4)))];
+            setUniqueYears(years.sort((a, b) => b - a));
         };
         fetchData();
     }, []);
@@ -68,6 +72,25 @@ const Article = ({ idPerson }) => {
             type: "filter",
             payload: {
                 filter: e.target.value,
+                data: allArticles,
+            },
+        });
+    };
+
+    const handleEstadoFilter = (e) => {
+        setEstadoFilter(e.target.value);
+    };
+
+    const handleAnioFilter = (e) => {
+        setAnioFilter(e.target.value);
+    };
+
+    const handleFiltrar = () => {
+        dispatch({
+            type: "customFilter",
+            payload: {
+                estado: estadoFilter,
+                anio: anioFilter,
                 data: allArticles,
             },
         });
@@ -158,11 +181,57 @@ const Article = ({ idPerson }) => {
     };
 
     return (
-        <div className="flex flex-col py-16 bg-white">
+        <div className={"bg-[#FFF9E8] flex flex-col"}>
+            <div className="relative w-full h-80 overflow-hidden">
+                <img
+                    className="w-full h-full object-cover object-center"
+                    src="https://i.imgur.com/wVn9tnw.jpeg"
+                    alt="Fondo SIIIS"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
+                    <h1 className="text-white text-4xl lg:text-5xl font-bold">ARTÍCULOS</h1>
+                </div>
+            </div>
             <nav className="px-2 sm:px-4 py-2.5 dark:bg-gray-900">
                 <div className="container flex flex-wrap justify-between items-center mx-auto">
-                    <div className="flex md:order-2">
-                        <form>
+                    <div className="flex flex-wrap items-center gap-2 md:order-1">
+                        <select
+                            className="p-2 text-sm bg-gray-50 border rounded-lg min-w-[120px]"
+                            onChange={handleEstadoFilter}
+                        >
+                            <option value="">Estado</option>
+                            <option value="Finalizado">Finalizado</option>
+                            <option value="En curso">En curso</option>
+                        </select>
+
+                        <select
+                            className="p-2 text-sm bg-gray-50 border rounded-lg min-w-[100px]"
+                            onChange={handleAnioFilter}
+                        >
+                            <option value="">Año</option>
+                            {uniqueYears.map((year) => (
+                                <option key={year} value={year}>
+                                    {year}
+                                </option>
+                            ))}
+                        </select>
+
+                        <button
+                            onClick={handleFiltrar}
+                            className="p-2 bg-[#7C501C] text-white rounded-lg text-sm"
+                        >
+                            Filtrar
+                        </button>
+
+                        {currentUser && (
+                            <div className="ml-2">
+                                <Modal_Article dataArticle1 functionEdit="create" />
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="flex md:order-2 w-full md:w-auto mt-2 md:mt-0">
+                        <form className="w-full">
                             <label htmlFor="search" className="sr-only">Buscar</label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -176,23 +245,11 @@ const Article = ({ idPerson }) => {
                                     type="search"
                                     id="search"
                                     onChange={handleSearch}
-                                    className="block p-4 pl-10 w-full text-sm bg-gray-50 border rounded-lg"
+                                    className="block p-2 pl-10 w-full text-sm bg-gray-50 border rounded-lg"
                                     placeholder="Buscar artículos..."
                                 />
                             </div>
                         </form>
-                    </div>
-                    <div className="hidden w-full md:flex md:w-auto md:order-1" id="navbar-search">
-                        <ul className="flex flex-col md:flex-row md:space-x-8">
-                            <li>
-                                <a href="/Article" className="text-amber-500 font-bold text-xl">ARTÍCULOS</a>
-                            </li>
-                            {currentUser && (
-                                <li>
-                                    <Modal_Article dataArticle1 functionEdit="create" />
-                                </li>
-                            )}
-                        </ul>
                     </div>
                 </div>
             </nav>
