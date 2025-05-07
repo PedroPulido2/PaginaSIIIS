@@ -191,7 +191,7 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
 
     const useDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const isSmallScreen = window.matchMedia("(max-width: 1023.5px)").matches;
-
+    const isReadOnly = dataProject1.userUID !== user.uid && (!user1 || user1.role !== "admin" || functionEdit === "update");
     return (
         <>
             {/* -------------------------------------------start upload image--------------------------------------------------- */}
@@ -328,6 +328,7 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
                         id="projectCategory"
                         name="projectCategory"
                         defaultValue={dataProject1.projectCategory || ""}
+                        readOnly={dataProject1.projectCategory}
                         {...register("projectCategory", { required: true})}
                     >
                         <option value="">Seleccione una categoría</option>
@@ -345,6 +346,7 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
                         id="projectState"
                         name="projectState"
                         defaultValue={dataProject1.projectState || ""}
+                        readOnly={dataProject1.projectCategory}
                         {...register("projectState", { required: true })}
                     >
                         <option value="">Seleccione un estado</option>
