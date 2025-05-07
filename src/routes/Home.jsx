@@ -63,7 +63,7 @@ const Home = () => {
         <div className={"bg-[#FFF9E8]"}>
             <div className="relative w-full h-80 sm:h-96 md:h-[500px] lg:h-[600px] xl:h-[700px]">
                 {data && data.length !== 0 && data[0].role === "admin" && (
-                    <div className="relative flex justify-center items-center z-20">
+                    <div className="absolute top-4 left-4 z-20">
                         <label
                             htmlFor="file"
                             className="flex flex-col items-center px-4 py-2 bg-white text-blue-600 rounded-lg shadow-lg tracking-wide uppercase border border-blue-600 cursor-pointer hover:bg-blue-600 hover:text-white"
@@ -219,7 +219,7 @@ const Home = () => {
 
 
                 {/* SIIIS */}
-                <div className="flex flex-wrap justify-center gap-4 p-4">
+                <div className="flex flex-wrap justify-center gap-2 p-2">
                     {/* Card 1 */}
                     <div
                         className="bg-[#F7D467] hover:bg-[#F5BC4A] border-2 border-[#947646] rounded-lg p-4 w-72 h-80 shadow-md flex flex-col items-center transition-colors duration-300 group space-y-4">
