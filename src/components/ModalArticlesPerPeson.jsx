@@ -114,7 +114,7 @@ const ModalArticlesPerPerson = ({ item, data }) => {
               />
               
               <button
-                className="h-10 w-full font-semibold rounded-md bg-black text-white"
+                className="h-10 w-full font-semibold p-2 bg-red-500 hover:bg-red-700 text-white rounded-lg text-sm"
                 type="button"
                 onClick={() => handleClickDelete(item.id)}
               >

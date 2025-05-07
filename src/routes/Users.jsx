@@ -100,12 +100,12 @@ const Users = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-6 gap-4 p-6">
+      <div className="container flex flex-wrap justify-between items-center mx-auto pt-5 p-5">
         {data[0]?.role === "admin" && (
         <NavLink
           key="register"
           to="/register"
-          className="flex items-center justify-center px-3 py-2 rounded-md text-lg font-medium text-[#947646] hover:text-[#7C501C] transition duration-300"
+          className="p-2 bg-[#F7D467] hover:bg-[#F5BC4A] text-[#947646] hover:text-[#7C501C] rounded-lg text-sm"
           style={{backgroundColor: "#F7D467"}}
           onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#F5BC4A")}
           onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#F7D467")}
