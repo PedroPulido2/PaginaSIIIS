@@ -325,6 +325,23 @@ const EditorTiny = ({ dataArticle1: dataArticle1, functionEdit }) => {
             <FormErrors error={errors.name} />
           </FormInputEditor>
         </div>
+
+        <div className="mb-4">
+          <label htmlFor="articleState" className="block mb-1">Estado</label>
+          <select
+              id="articleState"
+              name="articleState"
+              disabled={functionEdit === "update" && (dataArticle1.userUID != user.uid && (!user1 || user1.role != "admin"))}
+              defaultValue={dataArticle1.articleState || ""}
+              {...register("articleState", { required: true })}
+          >
+            <option value="">Seleccione un estado</option>
+            <option value="Finalizado">Finalizado</option>
+            <option value="En curso">En curso</option>
+          </select>
+          <FormErrors error={errors.articleState} />
+        </div>
+
         <div className="grid gap-6 my-6 ">
           <label
             htmlFor="description"
