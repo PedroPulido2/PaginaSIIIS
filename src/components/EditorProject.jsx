@@ -326,8 +326,9 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
                     <label htmlFor="projectCategory" className="block mb-1">Categoría</label>
                     <select
                         id="projectCategory"
-                        {...register("projectCategory", { required: true})}
+                        name="projectCategory"
                         defaultValue={dataProject1.projectCategory || ""}
+                        {...register("projectCategory", { required: true})}
                     >
                         <option value="">Seleccione una categoría</option>
                         <option value="Software">Software</option>
@@ -342,8 +343,9 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
                     <label htmlFor="projectState" className="block mb-1">Estado</label>
                     <select
                         id="projectState"
-                        {...register("projectState", { required: true })}
+                        name="projectState"
                         defaultValue={dataProject1.projectState || ""}
+                        {...register("projectState", { required: true })}
                     >
                         <option value="">Seleccione un estado</option>
                         <option value="Terminado">Terminado</option>
