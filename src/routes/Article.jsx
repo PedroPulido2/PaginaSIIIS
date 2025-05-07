@@ -14,6 +14,7 @@ const Article = ({ idPerson }) => {
     const { loadingArticle, getDataArticles, deleteDataArticle } = useFirestoreArticles();
     const { loading, getDataUsers, getData } = useFirestore();
     const { setError } = useForm();
+
     const [bannerUrl, setBannerUrl] = useState('');
 
     const [users, setUsers] = useState([]);
