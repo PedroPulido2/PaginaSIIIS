@@ -103,7 +103,7 @@ const Article = ({idPerson}) => {
 
                     <div className="flex justify-end gap-4 mt-4">
                         <div>
-                            <Modal_Article dataArticle1={article} functionEdit="update" />
+                            <Modal_Article dataArticle1={article} functionEdit="update"/>
                         </div>
                         {(currentUser?.uid === article.userUID || users.find(u => u.userUID === currentUser?.uid)?.role === "admin") && (
                             <div>
