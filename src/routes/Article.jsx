@@ -168,7 +168,7 @@ const Article = ({ idPerson }) => {
                                 <button
                                     onClick={() => handleDelete(article)}
                                     type="button"
-                                    className="w-full py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-amber-500 hover:text-white focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                                    className="p-2 bg-red-500 hover:bg-red-700 text-white rounded-lg text-sm"
                                 >
                                     Eliminar
                                 </button>
@@ -218,7 +218,7 @@ const Article = ({ idPerson }) => {
 
                         <button
                             onClick={handleFiltrar}
-                            className="p-2 bg-[#7C501C] text-white rounded-lg text-sm"
+                            className="p-2 bg-[#9B6A2F] hover:bg-[#805325] text-white rounded-lg text-sm"
                         >
                             Filtrar
                         </button>
