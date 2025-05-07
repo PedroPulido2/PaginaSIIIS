@@ -15,14 +15,11 @@ import {
     collection,
     doc,
     getDocs,
-    getDoc,
-    setDoc,
     query,
-    where,
     updateDoc,
+    where,
     arrayUnion,
     arrayRemove,
-    serverTimestamp
 } from "firebase/firestore";
 
 const storage = getStorage(firebaseApp);
@@ -34,18 +31,11 @@ const getFullUserData = async (userUID) => {
         const usersRef = collection(db, "users");
         const q = query(usersRef, where("userUID", "==", userUID));
         const querySnapshot = await getDocs(q);
+        if (querySnapshot.empty) return null;
         
-        if (querySnapshot.empty) {
-            console.warn(`No user document found for UID: ${userUID}`);
-            return null;
-        }
-        
-        const doc = querySnapshot.docs[0];
-        const userData = doc.data();
-        
+        const userData = querySnapshot.docs[0].data();
         return {
-            id: doc.id, // ID del documento en Firestore
-            userUID: userData.userUID, // UID de Authentication
+            id: querySnapshot.docs[0].id,
             ...userData,
             fullName: `${userData.name} ${userData.lastName}`.trim()
         };
@@ -56,27 +46,15 @@ const getFullUserData = async (userUID) => {
 };
 
 // Función para actualizar los proyectos del usuario
-const updateUserProjects = async (userUID, projectId, action = 'add') => {
+const updateUserProjects = async (userId, projectId, action = 'add') => {
     try {
-        // Primero encontramos el documento del usuario por su userUID
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, where("userUID", "==", userUID));
-        const querySnapshot = await getDocs(q);
-        
-        if (querySnapshot.empty) {
-            console.warn(`No user document found for UID: ${userUID}`);
-            return;
-        }
-        
-        // Obtenemos la referencia al documento real
-        const userDocRef = doc(db, "users", querySnapshot.docs[0].id);
-        
+        const userRef = doc(db, "users", userId);
         if (action === 'add') {
-            await updateDoc(userDocRef, {
+            await updateDoc(userRef, {
                 projects: arrayUnion(projectId)
             });
         } else {
-            await updateDoc(userDocRef, {
+            await updateDoc(userRef, {
                 projects: arrayRemove(projectId)
             });
         }
@@ -114,7 +92,7 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
             // Cargar miembros del proyecto
             if (dataProject1.members && dataProject1.members.length > 0) {
                 const membersData = await Promise.all(
-                    dataProject1.members.map(memberUID => getFullUserData(memberUID))
+                    dataProject1.members.map(memberId => getFullUserData(memberId))
                 );
                 setProjectMembers(membersData.filter(m => m !== null));
             }
@@ -138,7 +116,7 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
             return;
         }
     
-        // Para creación de nuevos proyectos
+        // Para creación de nuevos proyectos (functionEdit !== "update")
         if (functionEdit !== "update") {
             setCanEdit(true);
             setStateReadOnly(false);
@@ -153,7 +131,7 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
     
         setCanEdit(hasEditPermission);
         setStateReadOnly(!hasEditPermission);
-        setStateReadOnlyDate(true);
+        setStateReadOnlyDate(true); // La fecha no se puede editar en actualización
     }, [user, user1, dataProject1.userUID, functionEdit]);
 
     // Inicializar referencias de imagen
@@ -190,10 +168,16 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
                     };
                 })
                 .filter(userResult => {
+                    // Excluir al usuario actual
                     if (userResult.userUID === user?.uid) return false;
+                                        
+                    // Excluir miembros ya agregados
                     if (projectMembers.some(m => m.userUID === userResult.userUID)) return false;
+                    
+                    // Excluir al dueño del proyecto (si estamos editando)
                     if (functionEdit === "update" && dataProject1.userUID === userResult.userUID) return false;
                     
+                    // Búsqueda case-insensitive
                     const searchLower = term.toLowerCase();
                     const nameMatch = userResult.fullName.toLowerCase().includes(searchLower);
                     const emailMatch = userResult.email.toLowerCase().includes(searchLower);
@@ -214,10 +198,12 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
         if (!canEdit) return;
         
         try {
+            // Agregar a la lista local
             setProjectMembers([...projectMembers, userToAdd]);
             setSearchTerm('');
             setSearchResults([]);
             
+            // Si estamos editando un proyecto existente, actualizar en Firestore
             if (functionEdit === "update" && dataProject1.id) {
                 await updateUserProjects(userToAdd.userUID, dataProject1.id, 'add');
             }
@@ -231,8 +217,10 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
         if (!canEdit) return;
         
         try {
+            // Eliminar de la lista local
             setProjectMembers(projectMembers.filter(member => member.userUID !== userUID));
             
+            // Si estamos editando un proyecto existente, actualizar en Firestore
             if (functionEdit === "update" && dataProject1.id) {
                 await updateUserProjects(userUID, dataProject1.id, 'remove');
             }
@@ -265,8 +253,8 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
             imageProject: imgRef.current,
             userUID: functionEdit === "update" ? dataProject1.userUID : user.uid,
             locationImage: locationImage.current,
-            members: projectMembers.map(m => m.userUID),
-            userName: projectOwner?.fullName || user1?.fullName
+            members: projectMembers.map(m => m.userUID), // Guardamos solo los UIDs
+            userName: projectOwner?.fullName || user1?.fullName // Guardar nombre del dueño
         };
         
         try {

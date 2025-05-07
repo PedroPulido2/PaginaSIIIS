@@ -11,6 +11,7 @@ import { UserContext } from "../context/UserProvider";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationIcon } from "@heroicons/react/outline";
 import firebaseApp from "../Firebase";
+import ProjectCard from '../components/ProjectCard';
 import {
   getStorage,
   ref,
@@ -18,31 +19,47 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
+import { 
+  getFirestore, 
+  collection, 
+  query, 
+  getDocs,
+  where,
+  limit
+} from "firebase/firestore";
 import Article from "./Article";
+import Project from "./Project";
 import { useFirestoreArticles } from "../hooks/useFirestoreArticles";
 import { useFirestoreReviews } from "../hooks/useFirestoreReviews";
-import Project from "./Project";
 
 const storage = getStorage(firebaseApp);
+const db = getFirestore(firebaseApp);
 
 const Profile = () => {
   const [open, setOpen] = useState(false);
-  const [data, setData] = useState([]);
+  const [profileData, setProfileData] = useState(null);
+  const [loadingError, setLoadingError] = useState(null);
+  const [projectsOwned, setProjectsOwned] = useState([]);
+  const [projectsMember, setProjectsMember] = useState([]);
+  const [loadingState, setLoadingState] = useState({
+    profile: true,
+    projects: true,
+    image: false,
+    action: false
+  });
+
   const imgRef = useRef();
   const hvRef = useRef();
   const locationHV = useRef();
   const locationImage = useRef();
-
   const cancelButtonRef = useRef(null);
 
   const { deleteUserWithID } = useContext(UserContext);
   const { deleteDataArticle } = useFirestoreArticles();
   const { deleteDataReview } = useFirestoreReviews();
-
-  // validate form with react-hook-form
   const { required } = FormValidate();
+  const { getData, updateData, deleteData } = useFirestore();
 
-  // useForm hook
   const {
     register,
     handleSubmit,
@@ -50,164 +67,220 @@ const Profile = () => {
     setError,
   } = useForm();
 
-  const { loading, getData, updateData, deleteData } = useFirestore();
-  const [loadingImage, setLoadingImage] = useState(false);
-
   useEffect(() => {
-    const loadData = async () => {
-      const data = await getData();
-      setData(data);
-      imgRef.current = data[0].profileImage;
+    const loadProfileData = async () => {
+      try {
+        setLoadingState(prev => ({...prev, profile: true}));
+        const data = await getData();
+        if (data && data.length > 0) {
+          setProfileData(data[0]);
+          imgRef.current = data[0].profileImage;
+          await loadProjects(data[0].userUID);
+        } else {
+          setLoadingError("No se encontraron datos del perfil");
+        }
+      } catch (error) {
+        console.error("Error loading profile:", error);
+        setLoadingError("Error al cargar el perfil");
+      } finally {
+        setLoadingState(prev => ({...prev, profile: false}));
+      }
     };
-    loadData();
+
+    const loadProjects = async (userUID) => {
+      if (!userUID) return;
+      
+      try {
+        setLoadingState(prev => ({...prev, projects: true}));
+        
+        // Consulta 1: Proyectos donde es el creador (no necesita índice especial)
+        const ownedQuery = query(
+          collection(db, "projects"),
+          where("createdBy", "==", userUID),
+          limit(10)
+        );
+        
+        // Consulta 2: Todos los proyectos (para buscar membresías)
+        const allProjectsQuery = query(
+          collection(db, "projects"),
+          limit(50) // Limitar a una cantidad razonable
+        );
+    
+        const [ownedSnapshot, allProjectsSnapshot] = await Promise.all([
+          getDocs(ownedQuery),
+          getDocs(allProjectsQuery)
+        ]);
+    
+        setProjectsOwned(ownedSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })));
+        
+        // Filtrar membresías en el cliente
+        setProjectsMember(allProjectsSnapshot.docs
+          .map(doc => ({ id: doc.id, ...doc.data() }))
+          .filter(project => 
+            project.members?.includes(userUID) && 
+            project.createdBy !== userUID
+          ));
+      } catch (error) {
+        console.error("Error loading projects:", error);
+      } finally {
+        setLoadingState(prev => ({...prev, projects: false}));
+      }
+    };
+
+    loadProfileData();
   }, []);
 
-  if (loading.getData || loading.getData === undefined) {
-    return (
-      <div className="text-center text-gray-500 text-xl font-bold h-screen">
-        Cargando...
-      </div>
-    );
-  }
-
-  // useState hook
   const onSubmit = async (dataUp) => {
-    const dataNew = {
-      ...data[0],
-      ...dataUp,
-    };
     try {
+      setLoadingState(prev => ({...prev, action: true}));
+      const dataNew = {
+        ...profileData,
+        ...dataUp,
+      };
       await updateData(dataNew);
-      setData([dataNew]);
+      setProfileData(dataNew);
       alert("Datos actualizados");
-      setLoadingImage(false);
     } catch (error) {
       console.log(error.code);
       const { code, message } = ErrorsFirebase(error.code);
       setError(code, { message });
+    } finally {
+      setLoadingState(prev => ({...prev, action: false, image: false}));
     }
   };
 
   const handleClickDelete = async (userData) => {
     try {
+      setLoadingState(prev => ({...prev, action: true}));
       await deleteData(userData.id);
+      
+      // Eliminar imagen si existe
       if (userData.locationImage) {
-        // Create a reference to the file to delete
-        const desertRef = ref(storage, userData.locationImage);
-        // Delete the file
-        await deleteObject(desertRef)
-          .then(() => {
-            // File deleted successfully
-          })
-          .catch((error) => {
-            // Uh-oh, an error occurred!
-          });
+        await deleteObject(ref(storage, userData.locationImage))
+          .catch(error => console.error("Error deleting image:", error));
       }
 
+      // Eliminar CV si existe
       if (userData.locationCurriculum) {
-        const hvRef = ref(storage, userData.locationCurriculum);
-        await deleteObject(hvRef);
+        await deleteObject(ref(storage, userData.locationCurriculum))
+          .catch(error => console.error("Error deleting CV:", error));
       }
-      await deleteDataArticle(userData.id);
-      await deleteDataReview(userData.id);
-      await deleteUserWithID();
-      //window.location.href = "/";
+
+      await Promise.all([
+        deleteDataArticle(userData.id),
+        deleteDataReview(userData.id),
+        deleteUserWithID()
+      ]);
+
+      window.location.href = "/";
     } catch (error) {
       console.log(error.code);
       const { code, message } = ErrorsFirebase(error.code);
       setError(code, { message });
+    } finally {
+      setLoadingState(prev => ({...prev, action: false}));
     }
   };
 
   const fileHandler = async (e) => {
     const file = e.target.files[0];
+    if (!file) return;
 
-    //validacion de archivos
     if (!file.type.startsWith("image/")) {
       alert("Por favor selecciona una imagen válida (jpg, png, etc).");
       return;
     }
 
-    if (file.size > 2 * 1024 * 1024) { // 2MB
+    if (file.size > 2 * 1024 * 1024) {
       alert("La imagen debe pesar menos de 2MB.");
       return;
     }
 
-    // Eliminar imagen anterior si existe
-    if (data[0].locationImage) {
-      const desertRef = ref(storage, data[0].locationImage);
-      await deleteObject(desertRef).catch((error) => console.error(error));
+    try {
+      setLoadingState(prev => ({...prev, image: true}));
+
+      // Eliminar imagen anterior si existe
+      if (profileData?.locationImage) {
+        await deleteObject(ref(storage, profileData.locationImage))
+          .catch(error => console.error(error));
+      }
+
+      const name_file = `${profileData.name.replace(/\s/g, "")}${profileData.userUID.replace(/\s/g, "")}`;
+      const storageRef = ref(storage, `profile_images/${name_file}`);
+      locationImage.current = `profile_images/${name_file}`;
+      
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      imgRef.current = url;
+
+      const dataNew = {
+        ...profileData,
+        profileImage: url,
+        locationImage: locationImage.current,
+      };
+
+      await onSubmit(dataNew);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("Error al subir la imagen");
     }
-
-    setLoadingImage(true);
-
-    const name_file =
-      data[0].name.split(" ").join("") + data[0].userUID.split(" ").join("");
-    const storageRef = ref(storage, `profile_images/${name_file}`);
-    locationImage.current = `profile_images/${name_file}`;
-    await uploadBytes(storageRef, file);
-    const url = await getDownloadURL(storageRef);
-    imgRef.current = url;
-
-    const dataNew = {
-      ...data[0],
-      profileImage: url,
-      locationImage: locationImage.current,
-    };
-
-    onSubmit(dataNew);
   };
 
   const hvHandler = async (e) => {
     const file = e.target.files[0];
+    if (!file) return;
 
-    // --- Validación de archivo antes de subirlo ---
     if (file.type !== "application/pdf") {
       alert("Por favor sube un archivo PDF.");
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB
+    if (file.size > 5 * 1024 * 1024) {
       alert("El archivo PDF debe pesar menos de 5MB.");
       return;
     }
 
-    // Eliminar PDF anterior si existe
-    if (data[0].locationHV) {
-      const desertRef = ref(storage, data[0].locationHV);
-      await deleteObject(desertRef).catch((error) => console.error(error));
+    try {
+      setLoadingState(prev => ({...prev, image: true}));
+
+      if (profileData?.locationCurriculum) {
+        await deleteObject(ref(storage, profileData.locationCurriculum))
+          .catch(error => console.error(error));
+      }
+
+      const name_file = `${profileData.name.replace(/\s/g, "")}${profileData.userUID.replace(/\s/g, "")}_CV`;
+      const storageRef = ref(storage, `curriculums_users/${name_file}`);
+      locationHV.current = `curriculums_users/${name_file}`;
+      
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      hvRef.current = url;
+
+      const dataNew = {
+        ...profileData,
+        curriculumPDF: url,
+        locationCurriculum: locationHV.current,
+      };
+
+      await onSubmit(dataNew);
+    } catch (error) {
+      console.error("Error uploading PDF:", error);
+      alert("Error al subir el PDF");
     }
-
-    setLoadingImage(true);
-
-    const name_file = data[0].name.split(" ").join("") +
-      data[0].userUID.split(" ").join("") + "_CV";
-    const storageRef = ref(storage, `curriculums_users/${name_file}`);
-    locationHV.current = `curriculums_users/${name_file}`;
-    await uploadBytes(storageRef, file);
-    const url = await getDownloadURL(storageRef);
-    hvRef.current = url;
-
-    const dataNew = {
-      ...data[0],
-      curriculumPDF: url,
-      locationCurriculum: locationHV.current,
-    };
-
-    onSubmit(dataNew);
   };
 
   const deleteResume = async () => {
-    if (!data[0]?.locationCurriculum) return;
+    if (!profileData?.locationCurriculum) return;
 
     try {
-      // Eliminar el archivo de Storage
-      const desertRef = ref(storage, data[0].locationCurriculum);
-      await deleteObject(desertRef);
+      setLoadingState(prev => ({...prev, action: true}));
+      await deleteObject(ref(storage, profileData.locationCurriculum));
 
-      // Actualizar el documento del usuario eliminando los campos del PDF
       const dataNew = {
-        ...data[0],
+        ...profileData,
         curriculumPDF: null,
         locationCurriculum: null
       };
@@ -217,83 +290,77 @@ const Profile = () => {
     } catch (error) {
       console.error("Error al eliminar hoja de vida:", error);
       alert("Error al eliminar hoja de vida");
+    } finally {
+      setLoadingState(prev => ({...prev, action: false}));
     }
   };
+
+  if (loadingState.profile && !profileData) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500"></div>
+      </div>
+    );
+  }
+
+  if (loadingError) {
+    return (
+      <div className="text-center p-8">
+        <div className="text-red-500 mb-4">{loadingError}</div>
+        <button 
+          onClick={() => window.location.reload()}
+          className="bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600 transition"
+        >
+          Reintentar
+        </button>
+      </div>
+    );
+  }
+
+  if (!profileData) {
+    return (
+      <div className="text-center p-8">
+        <div className="text-gray-500 mb-4">No se encontraron datos del perfil</div>
+      </div>
+    );
+  }
 
   return (
     <>
       <FormErrors error={errors.errorIntern} />
       <div className="p-6 my-24 w-9/12 ml-auto mr-auto bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
         <div className="grid gap-6 mb-3 lg:grid-cols-4">
-          <label className=" col-end-5  text-lg font-semibold text-slate-500 text-right rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500">
-            Rol: {data[0].role === "admin" ? "Administrador" : data[0].role === "user" ? "Usuario" : "Integrante"}
+          <label className="col-end-5 text-lg font-semibold text-slate-500 text-right rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            Rol: {profileData.role === "admin" ? "Administrador" : profileData.role === "user" ? "Usuario" : "Integrante"}
             <br />
-            Estado Academico:{" "}{data[0].academicStatus}
+            Estado Académico: {profileData.academicStatus}
           </label>
         </div>
-        {/* --------------------------------------start profile image------------------------------------- */}
-        <div
-          className={
-            "profile-image flex justify-center items-center my-0 mx-auto"
-          }
-        >
-          <figure
-            className={
-              "relative w-40 h-40 rounded-full border-2 border-solid border-gray-300 z-0"
-            }
-          >
-            <label
-              htmlFor="file-input"
-              className={"cursor-pointer w-full h-full flex justify-center"}
-            >
-              {loadingImage ? (
-                <label className="text-center font-bold h-screen">
-                  <svg
-                    className="animate-spin"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 01 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                </label>
+
+        {/* Profile Image */}
+        <div className="profile-image flex justify-center items-center my-0 mx-auto">
+          <figure className="relative w-40 h-40 rounded-full border-2 border-solid border-gray-300 z-0">
+            <label htmlFor="file-input" className="cursor-pointer w-full h-full flex justify-center">
+              {loadingState.image ? (
+                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-full">
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
+                </div>
               ) : (
                 <img
-                  id={"image-profile"}
-                  className={
-                    "w-full h-full rounded-full transition-all duration-300 ease-out object-cover object-center"
-                  }
-                  src={imgRef.current}
-                  alt={"profile"}
+                  id="image-profile"
+                  className="w-full h-full rounded-full transition-all duration-300 ease-out object-cover object-center"
+                  src={imgRef.current || profileData.profileImage}
+                  alt="profile"
                   loading="lazy"
                   decoding="async"
                 />
               )}
 
-              <div
-                className={
-                  "profile-image-edit absolute top-0 left-0 w-full h-full flex flex-col justify-end opacity-0 invisible text-center rounded-full text-xl text-white transition-all duration-300 ease-out hover:opacity-100 hover:visible"
-                }
-              >
+              <div className="profile-image-edit absolute top-0 left-0 w-full h-full flex flex-col justify-end opacity-0 invisible text-center rounded-full text-xl text-white transition-all duration-300 ease-out hover:opacity-100 hover:visible">
                 <span>Subir foto</span>
-                {/* <i className="fas fa-camera mb-2.5"></i> */}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 mb-2.5"
+                  className="h-6 w-6 mb-2.5 mx-auto"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -311,25 +378,26 @@ const Profile = () => {
                   />
                 </svg>
               </div>
-
             </label>
 
             <input
-              className={"hidden"}
+              className="hidden"
               id="file-input"
               name="image"
               type="file"
               accept="image/*"
               onChange={fileHandler}
+              disabled={loadingState.image}
             />
           </figure>
         </div>
-        {/* Sección para subir hoja de vida */}
+
+        {/* Resume Section */}
         <div className="my-6 p-4 border rounded-lg bg-gray-50">
           <h3 className="text-lg font-medium text-gray-900 mb-3">Hoja de Vida (PDF)</h3>
 
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            {data[0]?.curriculumPDF ? (
+            {profileData?.curriculumPDF ? (
               <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-3">
                 <div className="flex items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -340,7 +408,7 @@ const Profile = () => {
 
                 <div className="flex gap-2">
                   <a
-                    href={data[0].curriculumPDF}
+                    href={profileData.curriculumPDF}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -349,10 +417,10 @@ const Profile = () => {
                   </a>
                   <button
                     onClick={deleteResume}
-                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                    type="button"
+                    disabled={loadingState.action}
+                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
                   >
-                    Eliminar
+                    {loadingState.action ? 'Eliminando...' : 'Eliminar'}
                   </button>
                 </div>
               </div>
@@ -365,69 +433,63 @@ const Profile = () => {
               </div>
             )}
 
-            <label className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <label className={`cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${loadingState.image ? 'opacity-50 cursor-not-allowed' : ''}`}>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
-              {data[0]?.curriculumPDF ? "Cambiar PDF" : "Subir PDF"}
+              {profileData?.curriculumPDF ? "Cambiar PDF" : "Subir PDF"}
               <input
                 type="file"
                 className="hidden"
                 accept="application/pdf"
                 onChange={hvHandler}
+                disabled={loadingState.image}
               />
             </label>
           </div>
         </div>
 
+        {/* Profile Form */}
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid gap-6 my-6 lg:grid-cols-2">
             <FormInputProfile
               type="text"
-              placeholder={data[0].name}
+              placeholder={profileData.name}
               label="Nombres"
               htmlFor="name"
               name="name"
               error={errors.name}
-              {...register("name", {
-                required,
-              })}
+              {...register("name", { required })}
             >
               <FormErrors error={errors.name} />
             </FormInputProfile>
 
             <FormInputProfile
               type="text"
-              placeholder={data[0].lastName}
+              placeholder={profileData.lastName}
               label="Apellidos"
               htmlFor="lastName"
               name="lastName"
               error={errors.lastName}
-              {...register("lastName", {
-                required,
-              })}
+              {...register("lastName", { required })}
             >
-              <FormErrors error={errors.name} />
+              <FormErrors error={errors.lastName} />
             </FormInputProfile>
 
             <FormInputProfile
               type="tel"
-              placeholder={data[0].phone}
-              label="Telefono"
+              placeholder={profileData.phone}
+              label="Teléfono"
               htmlFor="phone"
               name="phone"
               error={errors.phone}
-              {...register("phone", {
-                required,
-              })}
+              {...register("phone", { required })}
             >
               <FormErrors error={errors.phone} />
             </FormInputProfile>
+
             <div className="mb-6">
-              <label
-                htmlFor="email"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >
+              <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                 Correo
               </label>
               <input
@@ -435,37 +497,35 @@ const Profile = () => {
                 id="email"
                 name="email"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder={data[0].email}
-                defaultValue={data[0].email}
+                placeholder={profileData.email}
+                defaultValue={profileData.email}
                 readOnly
                 {...register("email")}
               />
             </div>
           </div>
 
-
           <button
             type="submit"
-            className=" group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-amber-400 hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
+            disabled={loadingState.action}
+            className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-amber-400 hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 ${loadingState.action ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            Actualizar Información
+            {loadingState.action ? 'Actualizando...' : 'Actualizar Información'}
           </button>
+          
           <button
-            className=" group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-700"
             type="button"
             onClick={() => setOpen(true)}
+            disabled={loadingState.action}
+            className={`mt-4 group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-700 ${loadingState.action ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             Eliminar cuenta
           </button>
         </form>
 
+        {/* Delete Account Dialog */}
         <Transition.Root show={open} as={Fragment}>
-          <Dialog
-            as="div"
-            className="relative z-10"
-            initialFocus={cancelButtonRef}
-            onClose={setOpen}
-          >
+          <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setOpen}>
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -493,22 +553,15 @@ const Profile = () => {
                     <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                       <div className="sm:flex sm:items-start">
                         <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                          <ExclamationIcon
-                            className="h-6 w-6 text-red-600"
-                            aria-hidden="true"
-                          />
+                          <ExclamationIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                         </div>
                         <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                          <Dialog.Title
-                            as="h3"
-                            className="text-lg leading-6 font-medium text-gray-900"
-                          >
-                            Deactivar cuenta
+                          <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900">
+                            Desactivar cuenta
                           </Dialog.Title>
                           <div className="mt-2">
                             <p className="text-sm text-gray-500">
-                              Estás a punto de eliminar tu cuenta, está acción
-                              es irrevercible.
+                              Estás a punto de eliminar tu cuenta, está acción es irreversible.
                             </p>
                           </div>
                         </div>
@@ -518,15 +571,17 @@ const Profile = () => {
                       <button
                         type="button"
                         className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-                        onClick={() => handleClickDelete(data[0])}
+                        onClick={() => handleClickDelete(profileData)}
+                        disabled={loadingState.action}
                       >
-                        Eliminar cuenta
+                        {loadingState.action ? 'Eliminando...' : 'Eliminar cuenta'}
                       </button>
                       <button
                         type="button"
                         className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                         onClick={() => setOpen(false)}
                         ref={cancelButtonRef}
+                        disabled={loadingState.action}
                       >
                         Cancelar
                       </button>
@@ -538,8 +593,52 @@ const Profile = () => {
           </Dialog>
         </Transition.Root>
       </div>
-      <Article idPerson={data[0].userUID} />
-      <Project idPerson={data[0].userUID} />
+
+      <div className="p-6 my-6 w-9/12 mx-auto bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
+        {loadingState.projects ? (
+          <div className="flex justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-amber-500"></div>
+          </div>
+        ) : (
+          <>         
+          <h1 className="text-amber-500 font-bold text-3xl text-center my-6">Mis Articulos</h1>   
+            <Article idPerson={profileData.userUID} />
+
+            <h1 className="text-amber-500 font-bold text-3xl text-center my-6">Mis Proyectos</h1>       
+            <Project idPerson={profileData.userUID} />
+          </>
+        )}
+      </div>
+
+      <div className="p-6 my-6 w-9/12 mx-auto bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
+        {loadingState.projects ? (
+          <div className="flex justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-amber-500"></div>
+          </div>
+        ) : (
+          <>            
+           {/* Member Projects */}
+            <div>
+              <h1 className="text-amber-500 font-bold text-3xl text-center my-6">Proyectos en los que participo</h1>
+              {projectsMember.length > 0 ? (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">         
+                   {projectsMember.map((project) => (
+                    <ProjectCard key={project.id} project={project} />
+                  ))}    
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <h3 className="mt-2 text-lg font-medium text-gray-900">No hay proyectos</h3>
+                  <p className="mt-1 text-gray-500">No participas en ningún proyecto actualmente.</p>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
     </>
   );
 };
