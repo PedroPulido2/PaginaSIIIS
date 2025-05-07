@@ -7,7 +7,7 @@ import {getStorage, ref, deleteObject} from "firebase/storage";
 import Modal_Article from "../components/Modal_Article";
 import {getAuth} from "firebase/auth";
 
-const Article = ({idPerson}) => {
+const Article = ({ idPerson }) => {
     const auth = getAuth();
     const currentUser = auth.currentUser;
     const {
@@ -22,7 +22,7 @@ const Article = ({idPerson}) => {
         getData,
     } = useFirestore();
 
-    const {setError} = useForm();
+    const { setError } = useForm();
 
     const [users, setUsers] = useState([]);
     const [allArticles, setAllArticles] = useState([]);
@@ -45,22 +45,10 @@ const Article = ({idPerson}) => {
             const articlesData = await getDataArticles();
             setUsers(usersData);
             setAllArticles(articlesData);
-            dispatch({type: "all", payload: articlesData});
+            dispatch({ type: "all", payload: articlesData });
         };
         fetchData();
     }, []);
-
-    if (
-        loading.getDataUsers ||
-        loadingArticle.getDataArticles ||
-        (loadingArticle.getDataArticles === undefined && loading.getDataUsers)
-    ) {
-        return (
-            <div className="text-center text-gray-500 text-xl font-bold h-screen">
-                Cargando...
-            </div>
-        );
-    }
 
     const handleDelete = async (article) => {
         try {
@@ -68,10 +56,10 @@ const Article = ({idPerson}) => {
             const storage = getStorage();
             const imageRef = ref(storage, article.locationImage);
             await deleteObject(imageRef);
-            window.location.reload(); // opcional: reemplazar por manejo de estado
+            window.location.reload();
         } catch (error) {
-            const {code, message} = ErrorsFirebase(error.code);
-            setError(code, {message});
+            const { code, message } = ErrorsFirebase(error.code);
+            setError(code, { message });
         }
     };
 
@@ -85,8 +73,15 @@ const Article = ({idPerson}) => {
         });
     };
 
+    const handleViewArticle = (articleId) => {
+        window.location.href = `/article/${articleId}`;
+    };
+
     const renderArticleCard = (article) => {
         const user = users.find(u => u.userUID === article.userUID);
+        const isOwnerOrAdmin =
+            currentUser?.uid === article.userUID ||
+            users.find(u => u.userUID === currentUser?.uid)?.role === "admin";
 
         return (
             <div key={article.id} className="group relative rounded-lg border">
@@ -101,22 +96,6 @@ const Article = ({idPerson}) => {
                     <p className="font-semibold">{article.title}</p>
                     <p className="font-semibold text-slate-200">{article.description}</p>
 
-                    <div className="flex justify-end gap-4 mt-4">
-                        <div>
-                            <Modal_Article dataArticle1={article} functionEdit="update"/>
-                        </div>
-                        {(currentUser?.uid === article.userUID || users.find(u => u.userUID === currentUser?.uid)?.role === "admin") && (
-                            <div>
-                                <button
-                                    onClick={() => handleDelete(article)}
-                                    type="button"
-                                    className="w-full py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-amber-500 hover:text-white focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                                >
-                                    Eliminar
-                                </button>
-                            </div>
-                        )}
-                    </div>
                     <div className="flex items-center mt-4 space-x-4">
                         <img
                             className="w-10 h-10 border rounded-full"
@@ -128,17 +107,50 @@ const Article = ({idPerson}) => {
                             <div className="text-sm text-gray-300">{article.date}</div>
                         </div>
                     </div>
-                    {/* Estado del artículo */}
+
                     <div className="mt-2">
-                    <span
-                        className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-2
+                        <span
+                            className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-2
                             ${article.articleState === 'Finalizado'
-                            ? 'bg-green-200 text-green-800'
-                            : 'bg-yellow-200 text-yellow-800'
-                        }`}
-                    >
-                        {article.articleState}
-                    </span>
+                                ? 'bg-green-200 text-green-800'
+                                : 'bg-yellow-200 text-yellow-800'
+                            }`}
+                        >
+                            {article.articleState}
+                        </span>
+                    </div>
+
+                    <div className="mt-4 text-center">
+                        <button
+                            onClick={() => handleViewArticle(article.id)}
+                            className="px-6 py-2 rounded-lg transition"
+                            style={{
+                                backgroundColor: "#9B6A2F",
+                                color: "#ffffff",
+                            }}
+                            onMouseOver={(e) => (e.target.style.backgroundColor = "#805325")}
+                            onMouseOut={(e) => (e.target.style.backgroundColor = "#9B6A2F")}
+                        >
+                            Leer más
+                        </button>
+                    </div>
+                    <div className="flex justify-end gap-4 mt-4">
+                        {isOwnerOrAdmin && (
+                            <div>
+                                <Modal_Article dataArticle1={article} functionEdit="update" />
+                            </div>
+                        )}
+                        {isOwnerOrAdmin && (
+                            <div>
+                                <button
+                                    onClick={() => handleDelete(article)}
+                                    type="button"
+                                    className="w-full py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-amber-500 hover:text-white focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                                >
+                                    Eliminar
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -147,7 +159,6 @@ const Article = ({idPerson}) => {
 
     return (
         <div className="flex flex-col py-16 bg-white">
-            {/* Navbar */}
             <nav className="px-2 sm:px-4 py-2.5 dark:bg-gray-900">
                 <div className="container flex flex-wrap justify-between items-center mx-auto">
                     <div className="flex md:order-2">
@@ -158,7 +169,7 @@ const Article = ({idPerson}) => {
                                     <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor"
                                          viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                     </svg>
                                 </div>
                                 <input
@@ -178,7 +189,7 @@ const Article = ({idPerson}) => {
                             </li>
                             {currentUser && (
                                 <li>
-                                    <Modal_Article dataArticle1 functionEdit="create"/>
+                                    <Modal_Article dataArticle1 functionEdit="create" />
                                 </li>
                             )}
                         </ul>
@@ -186,7 +197,6 @@ const Article = ({idPerson}) => {
                 </div>
             </nav>
 
-            {/* Artículos */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="py-6">
                     <div className="grid gap-6 lg:grid-cols-3">
