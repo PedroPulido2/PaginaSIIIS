@@ -282,7 +282,7 @@ const Home = () => {
                         </p>
                         <a
                             href="https://semillerosiiis.blogspot.com/"
-                            className="inline-block bg-[#9B6A2F] text-white font-medium py-2 px-6 rounded"
+                            className="inline-block bg-[#9B6A2F] hover:bg-[#805325] text-white font-semibold text-lg py-3 px-6 rounded transition-colors duration-300"
                         >
                             Blog
                         </a>
