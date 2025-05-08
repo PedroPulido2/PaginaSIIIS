@@ -145,7 +145,6 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
         }
     }, [functionEdit, dataProject1]);
 
-    // Buscar usuarios (case insensitive)
     const searchUsers = async (term) => {
         if (!term.trim()) {
             setSearchResults([]);
@@ -168,14 +167,20 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
                     };
                 })
                 .filter(userResult => {
-                    // Excluir al usuario actual
-                    if (userResult.userUID === user?.uid) return false;
+                    // No excluir al usuario actual si es admin (puede necesitar añadirse a proyectos)
+                    if (userResult.userUID === user?.uid && user1?.role !== "admin") {
+                        return false;
+                    }
                                         
                     // Excluir miembros ya agregados
-                    if (projectMembers.some(m => m.userUID === userResult.userUID)) return false;
+                    if (projectMembers.some(m => m.userUID === userResult.userUID)) {
+                        return false;
+                    }
                     
                     // Excluir al dueño del proyecto (si estamos editando)
-                    if (functionEdit === "update" && dataProject1.userUID === userResult.userUID) return false;
+                    if (functionEdit === "update" && dataProject1.userUID === userResult.userUID) {
+                        return false;
+                    }
                     
                     // Búsqueda case-insensitive
                     const searchLower = term.toLowerCase();

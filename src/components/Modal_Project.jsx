@@ -69,9 +69,6 @@ const Modal_Project = ({ dataProject1, functionEdit }) => {
                                                 </div>
 
                                                 <div className="mt-2">
-                                                    <p className="text-sm text-gray-500">
-                                                        Aquí podras ver o editar tu Proyecto
-                                                    </p>
 
                                                     <EditorTiny
                                                         dataProject1={dataProject1}
