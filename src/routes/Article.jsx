@@ -1,22 +1,21 @@
-import React, { useEffect, useState, useReducer } from "react";
-import { useForm } from "react-hook-form";
-import { useFirestore } from "../hooks/useFirestore";
-import { useFirestoreArticles } from "../hooks/useFirestoreArticles";
-import { ErrorsFirebase } from "../utils/ErrorsFirebase";
-import { getStorage, ref, deleteObject } from "firebase/storage";
+import React, {useEffect, useState, useReducer} from "react";
+import {useForm} from "react-hook-form";
+import {useFirestore} from "../hooks/useFirestore";
+import {useFirestoreArticles} from "../hooks/useFirestoreArticles";
+import {ErrorsFirebase} from "../utils/ErrorsFirebase";
+import {getStorage, ref, deleteObject} from "firebase/storage";
 import Modal_Article from "../components/Modal_Article";
-import { getAuth } from "firebase/auth";
-import { getDownloadURL } from "firebase/storage";
+import {getAuth} from "firebase/auth";
+import {getDownloadURL} from "firebase/storage";
 
-const Article = ({ idPerson }) => {
+const Article = ({idPerson}) => {
     const auth = getAuth();
     const currentUser = auth.currentUser;
-    const { loadingArticle, getDataArticles, deleteDataArticle } = useFirestoreArticles();
-    const { loading, getDataUsers, getData } = useFirestore();
-    const { setError } = useForm();
+    const {loadingArticle, getDataArticles, deleteDataArticle} = useFirestoreArticles();
+    const {loading, getDataUsers, getData} = useFirestore();
+    const {setError} = useForm();
 
     const [bannerUrl, setBannerUrl] = useState('');
-
     const [users, setUsers] = useState([]);
     const [allArticles, setAllArticles] = useState([]);
     const [estadoFilter, setEstadoFilter] = useState('');
@@ -48,10 +47,10 @@ const Article = ({ idPerson }) => {
             const articlesData = await getDataArticles();
             setUsers(usersData);
             setAllArticles(articlesData);
-            dispatch({ type: "all", payload: articlesData });
+            dispatch({type: "all", payload: articlesData});
 
             // Extraer años únicos
-            const years = [...new Set(articlesData.map(article => article.date.slice(0,4)))];
+            const years = [...new Set(articlesData.map(article => article.date.slice(0, 4)))];
             setUniqueYears(years.sort((a, b) => b - a));
 
             //imagen banner
@@ -69,6 +68,18 @@ const Article = ({ idPerson }) => {
         fetchData();
     }, []);
 
+    if (
+        loading.getDataUsers ||
+        loadingArticle.getDataArticles ||
+        (loadingArticle.getDataArticles === undefined && loading.getDataUsers)
+    ) {
+        return (
+            <div className="text-center text-gray-500 text-xl font-bold h-screen">
+                Cargando...
+            </div>
+        );
+    }
+
     const handleDelete = async (article) => {
         try {
             await deleteDataArticle(article.id);
@@ -77,8 +88,8 @@ const Article = ({ idPerson }) => {
             await deleteObject(imageRef);
             window.location.reload();
         } catch (error) {
-            const { code, message } = ErrorsFirebase(error.code);
-            setError(code, { message });
+            const {code, message} = ErrorsFirebase(error.code);
+            setError(code, {message});
         }
     };
 
@@ -172,10 +183,11 @@ const Article = ({ idPerson }) => {
                             Leer más
                         </button>
                     </div>
+
                     <div className="flex justify-end gap-4 mt-4">
                         {isOwnerOrAdmin && (
                             <div>
-                                <Modal_Article dataArticle1={article} functionEdit="update" />
+                                <Modal_Article dataArticle1={article} functionEdit="update"/>
                             </div>
                         )}
                         {isOwnerOrAdmin && (
@@ -240,7 +252,7 @@ const Article = ({ idPerson }) => {
 
                         {currentUser && (
                             <div className="ml-2">
-                                <Modal_Article dataArticle1 functionEdit="create" />
+                                <Modal_Article dataArticle1 functionEdit="create"/>
                             </div>
                         )}
                     </div>
@@ -253,7 +265,7 @@ const Article = ({ idPerson }) => {
                                     <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor"
                                          viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                     </svg>
                                 </div>
                                 <input
