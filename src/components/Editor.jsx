@@ -215,7 +215,7 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
       {/* Sección de carga de imagen */}
       <div className="profile-image flex justify-center items-center my-0 mx-auto">
         <figure className="relative w-40 h-40 rounded-full border-2 border-solid border-gray-300 z-0">
-          <label htmlFor="file-input" className="cursor-pointer w-full h-full flex justify-center">
+          <label htmlFor="file-input-article" className="cursor-pointer w-full h-full flex justify-center">
             {loadingImage ? (
               <div className="flex items-center justify-center h-full">
                 <svg className="animate-spin h-8 w-8 text-amber-500" viewBox="0 0 24 24">
@@ -247,7 +247,7 @@ const EditorTiny = ({ dataArticle1, functionEdit }) => {
           {!stateReadOnly && (
             <input
               className="hidden"
-              id="file-input"
+              id="file-input-article"
               name="image"
               type="file"
               accept="image/*"

@@ -48,7 +48,7 @@ const Profile = () => {
     action: false
   });
 
-  const imgRef = useRef();
+  const imgRefProfile = useRef();
   const hvRef = useRef();
   const locationHV = useRef();
   const locationImage = useRef();
@@ -74,7 +74,7 @@ const Profile = () => {
         const data = await getData();
         if (data && data.length > 0) {
           setProfileData(data[0]);
-          imgRef.current = data[0].profileImage;
+          imgRefProfile.current = data[0].profileImage;
           await loadProjects(data[0].userUID);
         } else {
           setLoadingError("No se encontraron datos del perfil");
@@ -214,7 +214,7 @@ const Profile = () => {
       
       await uploadBytes(storageRef, file);
       const url = await getDownloadURL(storageRef);
-      imgRef.current = url;
+      imgRefProfile.current = url;
 
       const dataNew = {
         ...profileData,
@@ -340,7 +340,7 @@ const Profile = () => {
         {/* Profile Image */}
         <div className="profile-image flex justify-center items-center my-0 mx-auto">
           <figure className="relative w-40 h-40 rounded-full border-2 border-solid border-gray-300 z-0">
-            <label htmlFor="file-input" className="cursor-pointer w-full h-full flex justify-center">
+            <label htmlFor="file-input-profile" className="cursor-pointer w-full h-full flex justify-center">
               {loadingState.image ? (
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-full">
                   <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
@@ -349,7 +349,7 @@ const Profile = () => {
                 <img
                   id="image-profile"
                   className="w-full h-full rounded-full transition-all duration-300 ease-out object-cover object-center"
-                  src={imgRef.current || profileData.profileImage}
+                  src={imgRefProfile.current || profileData.profileImage}
                   alt="profile"
                   loading="lazy"
                   decoding="async"
@@ -382,7 +382,7 @@ const Profile = () => {
 
             <input
               className="hidden"
-              id="file-input"
+              id="file-input-profile"
               name="image"
               type="file"
               accept="image/*"
@@ -609,7 +609,7 @@ const Profile = () => {
           </>
         )}
       </div>
-
+      
       <div className="p-6 my-6 w-9/12 mx-auto bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
         {loadingState.projects ? (
           <div className="flex justify-center py-8">

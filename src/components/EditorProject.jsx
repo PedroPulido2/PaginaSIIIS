@@ -139,6 +139,7 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
         if (functionEdit === "update" && dataProject1.imageProject && dataProject1.locationImage) {
             imgRef.current = dataProject1.imageProject;
             locationImage.current = dataProject1.locationImage;
+ 
         } else {
             locationImage.current = "images_projects/SinImagen.jpg";
             imgRef.current = "https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_projects%2FsinImagen.png?alt=media&token=b7f1da2e-ee80-406f-b26a-47f3a493dcd2";
@@ -241,6 +242,7 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
         handleSubmit,
         formState: { errors },
         setError,
+        setValue,
     } = useForm();
 
     const {
@@ -341,6 +343,16 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
         }
     };
 
+    useEffect(() => {
+    if (dataProject1) {
+        setValue("title", dataProject1.title || "");
+        setValue("date", dataProject1.date || "");
+        setValue("description", dataProject1.description || "");
+        setValue("projectCategory", dataProject1.projectCategory || "");
+        setValue("projectState", dataProject1.projectState || "");
+    }
+}, [dataProject1, setValue]);
+
     const useDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const isSmallScreen = window.matchMedia("(max-width: 1023.5px)").matches;
 
@@ -350,7 +362,7 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
             <div className="profile-image flex justify-center items-center my-0 mx-auto">
                 <figure className="relative w-40 h-40 rounded-full border-2 border-solid border-gray-300 z-0">
                     <label
-                        htmlFor="file-input"
+                        htmlFor="file-input-project"
                         className="cursor-pointer w-full h-full flex justify-center"
                     >
                         {loadingImage ? (
@@ -417,7 +429,7 @@ const EditorTiny = ({ dataProject1: dataProject1, functionEdit }) => {
 
                     <input
                         className="hidden"
-                        id="file-input"
+                        id="file-input-project"
                         name="image"
                         type={canEdit ? "file" : ""}
                         accept="image/*"
