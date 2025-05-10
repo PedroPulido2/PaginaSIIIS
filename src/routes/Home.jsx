@@ -7,6 +7,7 @@ import Reviews from "../components/Reviews";
 import {useFirestore} from "../hooks/useFirestore";
 import Article from "../routes/Article";
 import ArticleCarousel from "../components/ArticleCarousel";
+import ProjectCarousel from "../components/ProjectCarousel";
 
 const storage = getStorage(firebaseApp);
 
@@ -291,6 +292,7 @@ const Home = () => {
 
                 {/* Aquí abajo tu componente grande de artículos */}
                 <ArticleCarousel/>
+                <ProjectCarousel/>
 
                 <div className="flex items-center justify-center">
                     {/* Texto */}
