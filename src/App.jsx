@@ -15,6 +15,7 @@ import Profile from "./routes/Profile";
 import Users from "./routes/Users";
 import AboutUs from "./routes/AboutUs";
 import ArticleDetail from "./routes/ArticleDetail";
+import ProjectDetail from "./routes/ProjectDetail";
 
 // import components
 import "flowbite";
@@ -54,6 +55,7 @@ const App = () => {
                 <Route path="/Article" element={<Article/>}/>
                 <Route path="/Project" element={<Project/>}/>
                 <Route path="/Article/:id" element={<ArticleDetail/>}/>
+                <Route path="/Project/:id" element={<ProjectDetail/>}/>
                 <Route
                     path="/profile"
                     element={

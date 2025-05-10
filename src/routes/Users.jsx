@@ -1,7 +1,7 @@
 import { useEffect, useState, useReducer } from "react";
 import React from "react";
 import { useForm } from "react-hook-form";
-import ModalArticlesPerPerson from "../components/ModalArticlesPerPeson";
+import ModalPerPerson from "../components/ModalPerPeson";
 import { useFirestore } from "../hooks/useFirestore";
 import { ErrorsFirebase } from "../utils/ErrorsFirebase";
 import SelectRole from "../components/SelectRole";
@@ -156,7 +156,7 @@ const Users = () => {
       <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-1 gap-x-8 lg:grid-cols-2 xl:grid-cols-3 xl:gap-x-8">
         {state.map((item) => (
           <div key={item.id}>
-            <ModalArticlesPerPerson item={item} data={data[0]} />
+            <ModalPerPerson item={item} data={data[0]} />
           </div>
         ))}
       </div>
