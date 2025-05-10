@@ -43,11 +43,6 @@ const ArticleDetail = () => {
 
     return (
         <div className="max-w-4xl mx-auto px-4 py-10">
-            {/* Estado del artículo */}
-            <div className={`inline-block px-3 py-1 rounded-full text-sm font-semibold mb-4 ${statusClass}`}>
-                {article.articleState}
-            </div>
-
             <h1 className="text-4xl font-bold text-gray-800 mb-6">{article.title}</h1>
 
             <img
@@ -81,6 +76,10 @@ const ArticleDetail = () => {
                 <div className="text-gray-500 text-sm">Autor desconocido</div>
             )}
             <p className="text-gray-400 text-sm mb-8 mt-2">{article.date}</p>
+            {/* Estado del artículo */}
+            <div className={`inline-block px-3 py-1 rounded-full text-sm font-semibold mb-4 ${statusClass}`}>
+                {article.articleState}
+            </div>
         </div>
     );
 };

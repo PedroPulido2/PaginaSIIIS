@@ -126,7 +126,7 @@ const EditorTiny = ({ dataArticle1: dataArticle1, functionEdit }) => {
     const dataNew = {
       ...dataArticle1,
       ...data,
-      imageArticle: imgRef.current,
+      imageProject: imgRef.current,
       userUID: functionEdit === "update" ? dataArticle1.userUID : user.uid,
       locationImage: locationImage.current,
     };
