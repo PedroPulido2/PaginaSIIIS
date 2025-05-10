@@ -70,8 +70,7 @@ const Modal_Article = ({ dataArticle1, functionEdit }) => {
 
                         <div className="mt-2">
                           <p className="text-sm text-gray-500">
-                            Aquí podras ver o editar tu Articulo, noticia,
-                            opinión, reseña, etc...
+                            Aquí podras ver o editar tu Articulo
                           </p>
 
                           <EditorTiny
