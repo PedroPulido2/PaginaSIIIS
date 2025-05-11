@@ -63,10 +63,10 @@ const Home = () => {
         <div className={"bg-[#FFF9E8]"}>
             <div className="relative w-full h-80 sm:h-96 md:h-[500px] lg:h-[600px] xl:h-[700px]">
                 {data && data.length !== 0 && data[0].role === "admin" && (
-                    <div className="relative flex justify-center items-center z-20">
+                    <div className="relative flex justify-center items-center z-20 pointer-events-none">
                         <label
                             htmlFor="file"
-                            className="flex flex-col items-center px-4 py-2 bg-white text-blue-600 rounded-lg shadow-lg tracking-wide uppercase border border-blue-600 cursor-pointer hover:bg-blue-600 hover:text-white"
+                            className="flex flex-col items-center px-4 py-2 bg-white text-blue-600 rounded-lg shadow-lg tracking-wide uppercase border border-blue-600 cursor-pointer hover:bg-blue-600 hover:text-white pointer-events-auto"
                         >
                             <svg
                                 className="w-8 h-8"
