@@ -6,6 +6,7 @@ import { ErrorsFirebase } from "../utils/ErrorsFirebase";
 import { getStorage, ref, deleteObject } from "firebase/storage";
 import Modal_Project from "../components/Modal_Project";
 import { getAuth } from "firebase/auth";
+import { getDownloadURL } from "firebase/storage";
 
 const Project = ({ idPerson }) => {
     const auth = getAuth();
@@ -27,6 +28,11 @@ const Project = ({ idPerson }) => {
     const [users, setUsers] = useState([]);
     const [allProjects, setAllProjects] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
+    const [bannerUrl, setBannerUrl] = useState('');
+    const [estadoFilter, setEstadoFilter] = useState('');
+    const [uniqueYears, setUniqueYears] = useState([]);
+    const [anioFilter, setAnioFilter] = useState('');
+    const [categoriaFilter, setCategoriaFilter] = useState('');
 
     const [projectsFiltered, dispatch] = useReducer((state, action) => {
         switch (action.type) {
@@ -34,30 +40,18 @@ const Project = ({ idPerson }) => {
                 return action.payload.data.filter(project => {
                     const searchLower = action.payload.filter.toLowerCase();
                     const inTitle = project.title.toLowerCase().includes(searchLower);
-                    const inCategory = project.projectCategory.toLowerCase().includes(searchLower);
-                    const inState = project.projectState.toLowerCase().includes(searchLower);
 
-                    const isStateSearch =
-                        searchLower.includes("aprobado") ||
-                        searchLower.includes("en espera de aprobación") ||
-                        searchLower.includes("terminado");
-
-                    const isCategorySearch =
-                        searchLower.includes("Software") ||
-                        searchLower.includes("Telecomunicaciones") ||
-                        searchLower.includes("Inteligencia Artificial") ||
-                        searchLower.includes("Otra");
-
-                    if (isStateSearch) {
-                        return inState;
-                    }
-                    if (isCategorySearch) {
-                        return inCategory;
-                    }
-                    return inTitle || inCategory || inState;
+                    return inTitle;
                 });
             case "all":
                 return action.payload;
+            case "customFilter":
+                return action.payload.data.filter(project => {
+                    const matchEstado = action.payload.estado ? project.projectState.toLowerCase() === action.payload.estado.toLowerCase() : true;
+                    const matchCategoria = action.payload.categoria ? project.projectCategory.toLowerCase() === action.payload.categoria.toLowerCase() : true;
+                    const matchAnio = action.payload.anio ? project.date.includes(action.payload.anio) : true;
+                    return matchEstado && matchAnio && matchCategoria;
+                });
             default:
                 return state;
         }
@@ -70,6 +64,22 @@ const Project = ({ idPerson }) => {
             setUsers(usersData);
             setAllProjects(projectsData);
             dispatch({ type: "all", payload: projectsData });
+
+            // Extraer años únicos
+            const years = [...new Set(projectsData.map(project => project.date.slice(0, 4)))];
+            setUniqueYears(years.sort((a, b) => b - a));
+
+            //imagen banner
+            const storage = getStorage();
+            const bannerRef = ref(storage, 'images_banner/proyectos.jpeg');
+
+            getDownloadURL(bannerRef)
+                .then((url) => {
+                    setBannerUrl(url);
+                })
+                .catch((error) => {
+                    console.error('Error al obtener la imagen del banner:', error);
+                });
         };
         fetchData();
     }, []);
@@ -111,8 +121,39 @@ const Project = ({ idPerson }) => {
         });
     };
 
+    const handleEstadoFilter = (e) => {
+        setEstadoFilter(e.target.value);
+    };
+
+    const handleCategoriaFilter = (e) => {
+        setCategoriaFilter(e.target.value);
+    };
+
+    const handleAnioFilter = (e) => {
+        setAnioFilter(e.target.value);
+    };
+
+    const handleFiltrar = () => {
+        dispatch({
+            type: "customFilter",
+            payload: {
+                estado: estadoFilter,
+                categoria: categoriaFilter,
+                anio: anioFilter,
+                data: allProjects,
+            },
+        });
+    };
+
+    const handleViewProject = (projectId) => {
+        window.location.href = `/project/${projectId}`;
+    };
+
     const renderProjectCard = (project) => {
         const user = users.find(u => u.userUID === project.userUID);
+        const isOwnerOrAdmin =
+            currentUser?.uid === project.userUID ||
+            users.find(u => u.userUID === currentUser?.uid)?.role === "admin";
 
         return (
             <div key={project.id} className="group relative rounded-lg border">
@@ -137,14 +178,22 @@ const Project = ({ idPerson }) => {
 
                     <div className="flex justify-end gap-4 mt-4">
                         <div>
-                            <Modal_Project dataProject1={project} functionEdit="update" />
+                            {currentUser ? (
+                                <Modal_Project dataProject1={project} functionEdit="update" />
+                            ) : (
+                                <button
+                                    onClick={() => handleViewProject(project.id)}
+                                    className="w-full py-2.5 px-5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
+                                >
+                                    Abrir
+                                </button>)}
                         </div>
                         {(currentUser?.uid === project.userUID || users.find(u => u.userUID === currentUser?.uid)?.role === "admin") && (
                             <div>
                                 <button
                                     onClick={() => handleDelete(project)}
                                     type="button"
-                                    className="w-full py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-amber-500 hover:text-white focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                                    className="p-3 bg-red-500 hover:bg-red-700 text-white rounded-lg text-sm"
                                 >
                                     Eliminar
                                 </button>
@@ -180,18 +229,77 @@ const Project = ({ idPerson }) => {
                             {project.projectState}
                         </span>
                     </div>
+
                 </div>
             </div>
         );
     };
 
     return (
-        <div className="flex flex-col py-16 bg-white">
+        <div className={"bg-[#FFF9E8] flex flex-col"}>
+            <div className="relative w-full h-80 overflow-hidden">
+                <img
+                    className="w-full h-full object-cover object-center"
+                    src={bannerUrl || "https://via.placeholder.com/1200x400?text=Banner"}
+                    alt="Fondo SIIIS"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
+                    <h1 className="text-white text-4xl lg:text-5xl font-bold">PROYECTOS</h1>
+                </div>
+            </div>
             {/* Navbar */}
             <nav className="px-2 sm:px-4 py-2.5 dark:bg-gray-900">
                 <div className="container flex flex-wrap justify-between items-center mx-auto">
-                    <div className="flex md:order-2">
-                        <form>
+                    <div className="flex flex-wrap items-center gap-2 md:order-1">
+                        <select
+                            className="p-2 text-sm bg-gray-50 border rounded-lg min-w-[120px]"
+                            onChange={handleEstadoFilter}
+                        >
+                            <option value="">Estado</option>
+                            <option value="Terminado">Terminado</option>
+                            <option value="Aprobado">Aprobado</option>
+                            <option value="En espera de aprobación">En espera de aprobación</option>
+                        </select>
+
+                        <select
+                            className="p-2 text-sm bg-gray-50 border rounded-lg min-w-[120px]"
+                            onChange={handleCategoriaFilter}
+                        >
+                            <option value="">Categoria</option>
+                            <option value="Software">Software</option>
+                            <option value="Inteligencia Artificial">Inteligencia Artificial</option>
+                            <option value="Telecomunicaciones">Telecomunicaciones</option>
+                            <option value="Otra">Otra</option>
+                        </select>
+
+                        <select
+                            className="p-2 text-sm bg-gray-50 border rounded-lg min-w-[100px]"
+                            onChange={handleAnioFilter}
+                        >
+                            <option value="">Año</option>
+                            {uniqueYears.map((year) => (
+                                <option key={year} value={year}>
+                                    {year}
+                                </option>
+                            ))}
+                        </select>
+
+                        <button
+                            onClick={handleFiltrar}
+                            className="p-3 bg-[#9B6A2F] hover:bg-[#805325] text-white rounded-lg text-sm"
+                        >
+                            Filtrar
+                        </button>
+
+                        {currentUser && (
+                            <div className="ml-2">
+                                <Modal_Project dataProject1 functionEdit="create" />
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="flex md:order-2 w-full md:w-auto mt-2 md:mt-0">
+                        <form className="w-full">
                             <label htmlFor="search" className="sr-only">Buscar</label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -206,23 +314,11 @@ const Project = ({ idPerson }) => {
                                     id="search"
                                     value={searchTerm}
                                     onChange={handleSearch}
-                                    className="block p-4 pl-10 w-full text-sm bg-gray-50 border rounded-lg"
-                                    placeholder="Buscar por título, categoría o estado"
+                                    className="block p-3 pl-10 w-full text-sm bg-gray-50 border rounded-lg"
+                                    placeholder="Buscar proyectos..."
                                 />
                             </div>
                         </form>
-                    </div>
-                    <div className="hidden w-full md:flex md:w-auto md:order-1" id="navbar-search">
-                        <ul className="flex flex-col md:flex-row md:space-x-8">
-                            <li>
-                                <a href="/Project" className="text-amber-500 font-bold text-xl">PROYECTOS</a>
-                            </li>
-                            {currentUser && (
-                                <li>
-                                    <Modal_Project dataProject1 functionEdit="create" />
-                                </li>
-                            )}
-                        </ul>
                     </div>
                 </div>
             </nav>
@@ -231,11 +327,11 @@ const Project = ({ idPerson }) => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="py-6">
                     <div className="grid gap-6 lg:grid-cols-3">
-                        {projectsFiltered.map(article =>
+                        {projectsFiltered.map(project =>
                             idPerson ? (
-                                idPerson === article.userUID && renderProjectCard(article)
+                                idPerson === project.userUID && renderProjectCard(project)
                             ) : (
-                                renderProjectCard(article)
+                                renderProjectCard(project)
                             )
                         )}
                     </div>

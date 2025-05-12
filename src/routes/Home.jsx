@@ -7,6 +7,7 @@ import Reviews from "../components/Reviews";
 import {useFirestore} from "../hooks/useFirestore";
 import Article from "../routes/Article";
 import ArticleCarousel from "../components/ArticleCarousel";
+import ProjectCarousel from "../components/ProjectCarousel";
 
 const storage = getStorage(firebaseApp);
 
@@ -282,7 +283,7 @@ const Home = () => {
                         </p>
                         <a
                             href="https://semillerosiiis.blogspot.com/"
-                            className="inline-block bg-[#9B6A2F] text-white font-medium py-2 px-6 rounded"
+                            className="inline-block bg-[#9B6A2F] hover:bg-[#805325] text-white font-semibold text-lg py-3 px-6 rounded transition-colors duration-300"
                         >
                             Blog
                         </a>
@@ -291,6 +292,7 @@ const Home = () => {
 
                 {/* Aquí abajo tu componente grande de artículos */}
                 <ArticleCarousel/>
+                <ProjectCarousel/>
 
                 <div className="flex items-center justify-center">
                     {/* Texto */}

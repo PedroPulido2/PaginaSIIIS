@@ -12,8 +12,9 @@ import Article from "../routes/Article";
 import { ErrorsFirebase } from "../utils/ErrorsFirebase";
 import SelectRole from "./SelectRole";
 import SelectAcademicStatus from "./academicStatus";
+import Project from "../routes/Project";
 
-const ModalArticlesPerPerson = ({ item, data }) => {
+const ModalPerPerson = ({ item, data }) => {
   const [open, setOpen] = useState(false);
   const cancelButtonRef = useRef(null);
   const { deleteData } = useFirestore();
@@ -64,11 +65,10 @@ const ModalArticlesPerPerson = ({ item, data }) => {
             <span className="text-lg font-semibold text-slate-500 capitalize">
               {item.role === "user" ? "Usuario" : item.role === "member" ? "Integrante" : "Administrador"}
             </span>
-            
+
             {!data || data.role !== "admin" ? (
-              <span className={`text-sm font-semibold ${
-                item.academicStatus === 'Activo' ? 'text-teal-700' : 'text-teal-700'
-              }`}>
+              <span className={`text-sm font-semibold ${item.academicStatus === 'Activo' ? 'text-teal-700' : 'text-teal-700'
+                }`}>
                 {item.academicStatus}
               </span>
             ) : null}
@@ -87,9 +87,9 @@ const ModalArticlesPerPerson = ({ item, data }) => {
           {/* Botón de hoja de vida */}
           {item.curriculumPDF && (
             <div className="w-full text-center mb-4">
-              <a 
-                href={item.curriculumPDF} 
-                target="_blank" 
+              <a
+                href={item.curriculumPDF}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block bg-[#00365D] hover:bg-[#00497F] text-white font-bold py-2 px-6 rounded transition-colors duration-200"
               >
@@ -101,20 +101,20 @@ const ModalArticlesPerPerson = ({ item, data }) => {
           {/* Controles de admin */}
           {data.role === "admin" && (
             <div className="space-y-4 mt-4">
-              <SelectRole 
-                idUser={item.id} 
-                role={item.role} 
+              <SelectRole
+                idUser={item.id}
+                role={item.role}
                 className="w-full"
               />
-              
-              <SelectAcademicStatus 
-                idUser={item.id} 
-                academicStatus={item.academicStatus} 
+
+              <SelectAcademicStatus
+                idUser={item.id}
+                academicStatus={item.academicStatus}
                 className="w-full"
               />
-              
+
               <button
-                className="h-10 w-full font-semibold rounded-md bg-black text-white"
+                className="h-10 w-full font-semibold p-2 bg-red-500 hover:bg-red-700 text-white rounded-lg text-sm"
                 type="button"
                 onClick={() => handleClickDelete(item.id)}
               >
@@ -160,12 +160,6 @@ const ModalArticlesPerPerson = ({ item, data }) => {
                     <div className="sm:flex sm:items-start">
                       <div className="sm:m-4 stext-left">
                         <div className="grid grid-cols-6 gap-4">
-                          <Dialog.Title
-                            as="h1"
-                            className="col-start-1 col-end-3 text-lg leading-6 font-medium text-gray-900"
-                          >
-                            Articulos publicados por {item.name}
-                          </Dialog.Title>
                           <button
                             type="button"
                             className="col-end-7 mt-3 rounded-md border border-red-500 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
@@ -175,13 +169,11 @@ const ModalArticlesPerPerson = ({ item, data }) => {
                             X
                           </button>
                         </div>
-
                         <div className="mt-2">
-                          <p className="text-sm text-gray-500">
-                            Aquí podras ver todos los articulos publicados por
-                            el integrante seleccionado, etc...
-                          </p>
                           <Article idPerson={item.userUID} />
+                        </div>
+                        <div className="mt-2">
+                          <Project idPerson={item.userUID} />
                         </div>
                       </div>
                     </div>
@@ -196,4 +188,4 @@ const ModalArticlesPerPerson = ({ item, data }) => {
   );
 };
 
-export default ModalArticlesPerPerson;
+export default ModalPerPerson;

@@ -16,7 +16,7 @@ const ArticleDetail = () => {
             setArticle(foundArticle);
         };
         fetchArticle();
-    }, [id, getDataArticles]);
+    }, [id]);
 
     if (!article) {
         return (
@@ -28,6 +28,7 @@ const ArticleDetail = () => {
 
     return (
         <div className="max-w-4xl mx-auto px-4 py-10">
+            <p className="text-gray-400 text-sm mt-4">{article.date}</p>
             <h1 className="text-4xl font-bold text-gray-800 mb-6">{article.title}</h1>
             <img
                 src={article.imageArticle}
@@ -35,7 +36,13 @@ const ArticleDetail = () => {
                 className="w-full h-96 object-cover rounded-lg mb-6"
             />
             <p className="text-gray-700 text-lg">{article.description}</p>
-            <p className="text-gray-400 text-sm mt-4">{article.date}</p>
+            <div className="mt-6">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-4">Contenido</h2>
+                <div
+                    className="prose prose-lg text-gray-700"
+                    dangerouslySetInnerHTML={{ __html: article.content }}
+                />
+            </div>
         </div>
     );
 };

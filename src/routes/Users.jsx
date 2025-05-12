@@ -1,16 +1,19 @@
 import { useEffect, useState, useReducer } from "react";
 import React from "react";
 import { useForm } from "react-hook-form";
-import ModalArticlesPerPerson from "../components/ModalArticlesPerPeson";
+import ModalPerPerson from "../components/ModalPerPeson";
 import { useFirestore } from "../hooks/useFirestore";
 import { ErrorsFirebase } from "../utils/ErrorsFirebase";
 import SelectRole from "../components/SelectRole";
-import {NavLink} from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { getStorage, ref, deleteObject } from "firebase/storage";
+import { getDownloadURL } from "firebase/storage";
 
 const Users = () => {
   const { loading, getData, getDataUsers, deleteData } = useFirestore();
   const [data, setData] = useState([]);
   const [dataUsers, setDataUsers] = useState([]);
+  const [bannerUrl, setBannerUrl] = useState('');
 
 
   const reducer = (state, action) => {
@@ -32,7 +35,7 @@ const Users = () => {
   const [state, dispatch] = useReducer(reducer, []);
 
   useEffect(() => {
-    const loadData = async () => {
+    const fetchData = async () => {
       const data = await getData();
       const dataUsers = await getDataUsers();
       dispatch({ type: "all", payload: dataUsers });
@@ -48,8 +51,19 @@ const Users = () => {
           }
         })
       );
+      //imagen banner
+      const storage = getStorage();
+      const bannerRef = ref(storage, 'images_banner/usuarios.jpeg');
+
+      getDownloadURL(bannerRef)
+        .then((url) => {
+          setBannerUrl(url);
+        })
+        .catch((error) => {
+          console.error('Error al obtener la imagen del banner:', error);
+        });
     };
-    loadData();
+    fetchData();
   }, []);
 
   if (
@@ -75,24 +89,31 @@ const Users = () => {
   };
 
   return (
-    <div className="flex flex-col p-4 pt-14 bg-white">
-      <div className="grid grid-cols-6 gap-4 p-6">
-        <div className="col-start-1 col-end-3 ...">
-          <h1 className="font-semibold text-blue-900 text-3xl">USUARIOS</h1>
+    <div className={"bg-[#FFF9E8] flex flex-col"}>
+      <div className="relative w-full h-80 overflow-hidden">
+        <img
+          className="w-full h-full object-cover object-center"
+          src={bannerUrl || "https://via.placeholder.com/1200x400?text=Banner"}
+          alt="Fondo SIIIS"
+        />
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
+          <h1 className="text-white text-4xl lg:text-5xl font-bold">USUARIOS</h1>
         </div>
+      </div>
+      <div className="container flex flex-wrap justify-between items-center mx-auto pt-5 p-5">
 
         {data[0]?.role === "admin" && (
-        <NavLink
-          key="register"
-          to="/register"
-          className="flex items-center justify-center px-3 py-2 rounded-md text-lg font-medium text-[#947646] hover:text-[#7C501C] transition duration-300"
-          style={{backgroundColor: "#F7D467"}}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#F5BC4A")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#F7D467")}
-          aria-current="page"
-        >
-          Registrar usuario
-        </NavLink>
+          <NavLink
+            key="register"
+            to="/register"
+          className="p-3 bg-[#F7D467] hover:bg-[#F5BC4A] text-[#947646] hover:text-[#7C501C] rounded-lg text-sm"
+            style={{ backgroundColor: "#F7D467" }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#F5BC4A")}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#F7D467")}
+            aria-current="page"
+          >
+            Registrar usuario
+          </NavLink>
         )}
 
         <div className="col-end-7 col-span-2 ...">
@@ -136,7 +157,7 @@ const Users = () => {
       <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-1 gap-x-8 lg:grid-cols-2 xl:grid-cols-3 xl:gap-x-8">
         {state.map((item) => (
           <div key={item.id}>
-            <ModalArticlesPerPerson item={item} data={data[0]} />
+            <ModalPerPerson item={item} data={data[0]} />
           </div>
         ))}
       </div>
