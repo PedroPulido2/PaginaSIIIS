@@ -1,14 +1,14 @@
-import React, { useEffect, useState, useReducer } from "react";
-import { useForm } from "react-hook-form";
-import { useFirestore } from "../hooks/useFirestore";
-import { useFirestoreArticles } from "../hooks/useFirestoreArticles";
-import { ErrorsFirebase } from "../utils/ErrorsFirebase";
-import { getStorage, ref, deleteObject } from "firebase/storage";
+import React, {useEffect, useState, useReducer} from "react";
+import {useForm} from "react-hook-form";
+import {useFirestore} from "../hooks/useFirestore";
+import {useFirestoreArticles} from "../hooks/useFirestoreArticles";
+import {ErrorsFirebase} from "../utils/ErrorsFirebase";
+import {getStorage, ref, deleteObject} from "firebase/storage";
 import Modal_Article from "../components/Modal_Article";
 import { getAuth } from "firebase/auth";
 import { getDownloadURL } from "firebase/storage";
 
-const Article = ({ idPerson }) => {
+const Article = ({idPerson}) => {
     const auth = getAuth();
     const currentUser = auth.currentUser;
     const {
@@ -23,7 +23,7 @@ const Article = ({ idPerson }) => {
         getData,
     } = useFirestore();
 
-    const { setError } = useForm();
+    const {setError} = useForm();
 
     const [users, setUsers] = useState([]);
     const [allArticles, setAllArticles] = useState([]);
@@ -59,10 +59,7 @@ const Article = ({ idPerson }) => {
     useEffect(() => {
         const fetchData = async () => {
             const usersData = await getDataUsers();
-            const articlesData = (await getDataArticles()).map(article => ({
-                articleState: article.articleState || "en curso", // Valor por defecto
-                ...article
-            }));
+            const articlesData = await getDataArticles();
             setUsers(usersData);
             setAllArticles(articlesData);
             dispatch({ type: "all", payload: articlesData });
@@ -103,16 +100,14 @@ const Article = ({ idPerson }) => {
             const storage = getStorage();
             const imageRef = ref(storage, article.locationImage);
             await deleteObject(imageRef);
-            window.location.reload();
+            window.location.reload(); // opcional: reemplazar por manejo de estado
         } catch (error) {
-            const { code, message } = ErrorsFirebase(error.code);
-            setError(code, { message });
+            const {code, message} = ErrorsFirebase(error.code);
+            setError(code, {message});
         }
     };
 
     const handleSearch = (e) => {
-        const searchValue = e.target.value;
-        setSearchTerm(searchValue);
         dispatch({
             type: "filter",
             payload: {
@@ -189,7 +184,7 @@ const Article = ({ idPerson }) => {
                         {(currentUser?.uid === article.userUID || users.find(u => u.userUID === currentUser?.uid)?.role === "admin") && (
                             <div>
                                 <button
-                                    onClick={() => handleDelete(article)}
+                                    onClick={() => handleDelete(article)} // esta sí es tu función definida más arriba
                                     type="button"
                                     className="p-3 bg-red-500 hover:bg-red-700 text-white rounded-lg text-sm"
                                 >

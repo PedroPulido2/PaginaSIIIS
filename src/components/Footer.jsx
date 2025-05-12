@@ -50,7 +50,19 @@ const Footer = () => {
                             <h4 className="text-lg font-bold mb-4">Grupo de investigación</h4>
                             <a
                                 href="https://www.grupogalash.com/"
-                                className="text-blue-500 hover:text-blue-700"
+                                className="
+                                    inline-block
+                                    px-3 py-1
+                                    bg-white bg-opacity-10
+                                    text-yellow-300
+                                    font-semibold
+                                    rounded
+                                    border border-yellow-300
+                                    hover:bg-yellow-300 hover:text-[#003054]
+                                    transition
+                                    duration-200
+                                    ease-in-out
+                                    transform hover:-translate-y-0.5"
                             >
                                 GALASH
                             </a>
@@ -63,8 +75,19 @@ const Footer = () => {
                                 {/* Social Media Icons */}
                                 <a
                                     href="https://www.facebook.com/semillero.innovacion.5"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     type="button"
-                                    className="rounded-full border-2 border-white text-white leading-normal uppercase hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out w-9 h-9 m-1"
+                                    className="
+                                        rounded-full border-2 border-white text-white
+                                        w-9 h-9 m-1
+                                    -   hover:bg-black hover:bg-opacity-5
+                                    +   hover:bg-white hover:text-[#003054]
+                                    +   hover:shadow-lg
+                                    +   hover:scale-110
+                                        focus:outline-none focus:ring-0
+                                        transition duration-200 ease-in-out
+                                    "
                                 >
                                     <svg
                                         aria-hidden="true"
@@ -85,7 +108,16 @@ const Footer = () => {
                                 <a
                                     href="https://twitter.com/SIIIS2013"
                                     type="button"
-                                    className="rounded-full border-2 border-white text-white leading-normal uppercase hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out w-9 h-9 m-1"
+                                    className="
+                                        rounded-full border-2 border-white text-white
+                                        w-9 h-9 m-1
+                                    -   hover:bg-black hover:bg-opacity-5
+                                    +   hover:bg-white hover:text-[#003054]
+                                    +   hover:shadow-lg
+                                    +   hover:scale-110
+                                        focus:outline-none focus:ring-0
+                                        transition duration-200 ease-in-out
+                                    "
                                 >
                                     <svg
                                         aria-hidden="true"
@@ -106,7 +138,16 @@ const Footer = () => {
                                 <a
                                     href="https://www.instagram.com/semillero_siiis/"
                                     type="button"
-                                    className="rounded-full border-2 border-white text-white leading-normal uppercase hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out w-9 h-9 m-1"
+                                    className="
+                                        rounded-full border-2 border-white text-white
+                                        w-9 h-9 m-1
+                                    -   hover:bg-black hover:bg-opacity-5
+                                    +   hover:bg-white hover:text-[#003054]
+                                    +   hover:shadow-lg
+                                    +   hover:scale-110
+                                        focus:outline-none focus:ring-0
+                                        transition duration-200 ease-in-out
+                                    "
                                 >
                                     <svg
                                         aria-hidden="true"
@@ -127,7 +168,16 @@ const Footer = () => {
                                 <a
                                     href="https://www.linkedin.com/in/semillero-siiis-639019171/"
                                     type="button"
-                                    className="rounded-full border-2 border-white text-white leading-normal uppercase hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out w-9 h-9 m-1"
+                                    className="
+                                        rounded-full border-2 border-white text-white
+                                        w-9 h-9 m-1
+                                    -   hover:bg-black hover:bg-opacity-5
+                                    +   hover:bg-white hover:text-[#003054]
+                                    +   hover:shadow-lg
+                                    +   hover:scale-110
+                                        focus:outline-none focus:ring-0
+                                        transition duration-200 ease-in-out
+                                    "
                                 >
                                     <svg
                                         aria-hidden="true"
@@ -148,7 +198,16 @@ const Footer = () => {
                                 <a
                                     href="https://www.youtube.com/channel/UCHASg2rhbc4gB26n1gZQ-8w"
                                     type="button"
-                                    className="rounded-full border-2 border-white text-white leading-normal uppercase hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out w-9 h-9 m-1"
+                                    className="
+                                        rounded-full border-2 border-white text-white
+                                        w-9 h-9 m-1
+                                    -   hover:bg-black hover:bg-opacity-5
+                                    +   hover:bg-white hover:text-[#003054]
+                                    +   hover:shadow-lg
+                                    +   hover:scale-110
+                                        focus:outline-none focus:ring-0
+                                        transition duration-200 ease-in-out
+                                    "
                                 >
                                     <svg
                                         aria-hidden="true"
@@ -169,7 +228,16 @@ const Footer = () => {
                                 <a
                                     href="https://semillerosiiis.blogspot.com/"
                                     type="button"
-                                    className="rounded-full border-2 border-white text-white leading-normal uppercase hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out w-9 h-9 m-1"
+                                    className="
+                                        rounded-full border-2 border-white text-white
+                                        w-9 h-9 m-1
+                                    -   hover:bg-black hover:bg-opacity-5
+                                    +   hover:bg-white hover:text-[#003054]
+                                    +   hover:shadow-lg
+                                    +   hover:scale-110
+                                        focus:outline-none focus:ring-0
+                                        transition duration-200 ease-in-out
+                                    "
                                 >
                                     <svg
                                         aria-hidden="true"

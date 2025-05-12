@@ -8,7 +8,7 @@ const Members = () => {
     const { setError } = useForm();
     const [dataUsers, setDataUsers] = useState([]);
     const [page, setPage] = useState(0);
-    const perPage = 3; // Cambia a 4 si deseas mostrar 4 por grupo
+    const perPage = 4; 
 
     useEffect(() => {
         const loadData = async () => {
@@ -42,7 +42,7 @@ const Members = () => {
             </div>
 
             {/* Grid de miembros paginados */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl">
                 {paginatedUsers.map((user, index) => (
                     <div key={index} className="border-2 border-brown-700 rounded-lg p-6 flex flex-col items-center bg-white">
                         <img
@@ -88,6 +88,7 @@ const Members = () => {
                     <span className="text-black text-xl">→</span>
                 </button>
             </div>
+
 
         </div>
     );

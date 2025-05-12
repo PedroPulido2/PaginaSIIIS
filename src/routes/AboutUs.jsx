@@ -1,8 +1,55 @@
-import React from "react";
 import Members from "../components/members";
 import Mision_Vision from "../components/Mision_Vision";
+import React, { useState } from "react";
+
 
 const AboutUs = () => {
+  const [version, setVersion] = useState("V2");
+
+  const desarrolladoresV1 = [
+    {
+      nombre: "Esteban Duarte",
+      correo: "yessidduarte7@gmail.com",
+      imagen: "https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_about%2FEsteban.jpg?alt=media&token=6c51bc88-0477-46bb-af98-b5319903885e"
+    },
+    {
+      nombre: "Jimmy Zea",
+      correo: "yessidduarte7@gmail.com",
+      imagen: "https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_about%2FJimmyZea.jpeg?alt=media&token=12f12f9b-f0f1-4a28-ad24-709d80821beb"
+    }
+  ];
+
+  const desarrolladoresV2 = [
+    {
+      nombre: "Julian Diaz",
+      correo: "",
+      imagen: "https://via.placeholder.com/150"
+    },
+    {
+      nombre: "Juan Gonzalez",
+      correo: "",
+      imagen: "https://via.placeholder.com/150"
+    },
+    {
+      nombre: "Luis Gonzalez",
+      correo: "",
+      imagen: "https://via.placeholder.com/150"
+    },
+    {
+      nombre: "Pedro Pulido",
+      correo: "",
+      imagen: "https://via.placeholder.com/150"
+    },
+    {
+      nombre: "Jeimmy Valderrama",
+      correo: "",
+      imagen: "https://via.placeholder.com/150"
+    }
+  ];
+  
+
+  const desarrolladores = version === "V1" ? desarrolladoresV1 : desarrolladoresV2;
+
   return (
     <div className="flex flex-col items-center w-full">
 
@@ -89,57 +136,59 @@ const AboutUs = () => {
       <Members />
 
       {/* Desarrolladores */}
-      <div className="flex lg:flex-row flex-col justify-between gap-8 p-4 mt-12 bg-slate-100" style={{ borderRadius: "1rem" }}>
-        <div className="w-full lg:w-5/12 flex flex-col justify-center">
-          <h1 className="text-3xl lg:text-4xl font-bold leading-9 text-gray-800 pb-4">
-            Desarrolladores
-          </h1>
-          <p className="font-normal text-base leading-6 text-gray-600">
-            Somos estudiantes de Ingeniería de sistemas y computación de la
-            Universidad Pedagógica y Tecnológica de Colombia, que nos hemos
-            unido para crear un espacio de aprendizaje y colaboración para todos
-            los estudiantes de la universidad.
-          </p>
-        </div>
-        <div className="w-full lg:w-6/12 lg:pt-8">
-          <p className="p-2 font-normal col-span-2 text-base text-center leading-6 text-gray-600">
-            Ingenieros de Sistemas y Computación
-          </p>
-          <div className="flex flex-col lg:flex-row justify-center gap-4">
-            <div className="p-4 pb-6 text-center">
-              <img
-                className="w-40 h-40 rounded-full mx-auto object-cover"
-                src="https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_about%2FEsteban.jpg?alt=media&token=6c51bc88-0477-46bb-af98-b5319903885e"
-                alt="Esteban featured Img"
-              />
-              <p className="font-semibold text-xl leading-5 text-gray-800 mt-4">
-                Esteban Duarte
-              </p>
-              <p className="font-normal text-base leading-6 text-gray-600">
-                <a href="mailto:yessidduarte7@gmail.com">
-                  Correo: yessidduarte7@gmail.com
-                </a>
-              </p>
-            </div>
-            <div className="p-4 pb-6 text-center">
-              <img
-                className="w-40 h-40 rounded-full mx-auto object-cover"
-                src="https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_about%2FJimmyZea.jpeg?alt=media&token=12f12f9b-f0f1-4a28-ad24-709d80821beb"
-                alt="Jimmy featured Img"
-              />
-              <p className="font-semibold text-xl leading-5 text-gray-800 mt-4">
-                Jimmy Zea
-              </p>
-              <p className="font-normal text-base leading-6 text-gray-600">
-                <a href="mailto:yessidduarte7@gmail.com">
-                  Correo: yessidduarte7@gmail.com
-                </a>
-              </p>
-            </div>
+      <div className="flex flex-col gap-6 p-8 mt-12 bg-slate-100 rounded-xl w-full">
+        {/* Fila superior: texto centrado y selector a la derecha */}
+        <div className="flex flex-col gap-8 pt-12 px-4 items-center">     
+          <div className="w-full text-center">
+            <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 pb-4">
+              Desarrolladores
+            </h1>
+            <p className="font-normal text-base text-gray-600">
+              Somos estudiantes de Ingeniería de Sistemas y Computación de la Universidad Pedagógica y Tecnológica de Colombia.
+            </p>
+          </div>
+
+          {/* Selector alineado abajo */}
+          <div className="flex flex-col items-center mt-4 px-4 lg:px-8">
+            <label htmlFor="version" className="mb-2 font-medium text-gray-700">
+              Versión:
+            </label>
+            <select
+              id="version"
+              value={version}
+              onChange={(e) => setVersion(e.target.value)}
+              className="px-4 py-2 rounded border border-gray-300"
+            >
+              <option value="V1">V1 -</option>
+              <option value="V2">V2 -</option>
+            </select>
           </div>
         </div>
-      </div>
 
+        {/* Subtítulo */}
+        <p className="p-2 font-normal text-center text-base text-gray-600">
+          Ingenieros de Sistemas y Computación
+        </p>
+
+        {/* Avatares */}
+        <div className="flex flex-wrap justify-center gap-6">
+          {desarrolladores.map((dev, index) => (
+            <div key={index} className="p-4 pb-6 text-center">
+              <img
+                className="w-40 h-40 rounded-full mx-auto object-cover"
+                src={dev.imagen}
+                alt={`${dev.nombre} featured Img`}
+              />
+              <p className="font-semibold text-xl text-gray-800 mt-4">
+                {dev.nombre}
+              </p>
+              <p className="font-normal text-base text-gray-600">
+                <a href={`mailto:${dev.correo}`}>Correo: {dev.correo}</a>
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
