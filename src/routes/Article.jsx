@@ -108,6 +108,8 @@ const Article = ({idPerson}) => {
     };
 
     const handleSearch = (e) => {
+        const searchValue = e.target.value;
+        setSearchTerm(searchValue);
         dispatch({
             type: "filter",
             payload: {
