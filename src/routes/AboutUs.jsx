@@ -21,32 +21,33 @@ const AboutUs = () => {
 
   const desarrolladoresV2 = [
     {
-      nombre: "Julian Diaz",
-      correo: "",
-      imagen: "https://via.placeholder.com/150"
+      nombre: "Pedro Pulido",
+      correo: "pedro.pulido01@uptc.edu.co",
+      imagen: "https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_about%2FPedroPulido.jpeg?alt=media&token=ee25f201-540a-4f85-9ede-5e1e48303b5a"
     },
     {
-      nombre: "Juan Gonzalez",
-      correo: "",
-      imagen: "https://via.placeholder.com/150"
+      nombre: "Julian Diaz",
+      correo: "julian.diaz09@uptc.edu.co",
+      imagen: "https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_about%2FJulianDiaz.jpeg?alt=media&token=ee088dc7-0c4c-4e05-93e1-e97325aa44b2"
+    },
+    ,
+    {
+      nombre: "Jeimmy Valderrama",
+      correo: "jeimmy.valderrama@uptc.edu.co",
+      imagen: "https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_about%2FJeimmyValderrama.jpeg?alt=media&token=2452f498-8ead-4094-a7d4-1a4d48a60a76"
     },
     {
       nombre: "Luis Gonzalez",
-      correo: "",
-      imagen: "https://via.placeholder.com/150"
+      correo: "luis.gonzalez13@uptc.edu.co",
+      imagen: "https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_about%2FLuisGonzalez.jpeg?alt=media&token=aa8a7f77-a0d4-460f-9934-7f14253a5106"
     },
     {
-      nombre: "Pedro Pulido",
-      correo: "",
-      imagen: "https://via.placeholder.com/150"
-    },
-    {
-      nombre: "Jeimmy Valderrama",
-      correo: "",
-      imagen: "https://via.placeholder.com/150"
+      nombre: "Juan Gonzalez",
+      correo: "juan.gonzalez38@uptc.edu.co",
+      imagen: "https://firebasestorage.googleapis.com/v0/b/siiis-a2398.appspot.com/o/images_about%2FJuanDiego.jpeg?alt=media&token=a032d5c7-7839-4516-ab25-fdf6feee3d43"
     }
   ];
-  
+
 
   const desarrolladores = version === "V1" ? desarrolladoresV1 : desarrolladoresV2;
 
@@ -96,21 +97,21 @@ const AboutUs = () => {
         <div className="w-full mb-5">
           <div className="h-1 mx-auto bg-white w-1/6 opacity-25 rounded-t" />
         </div>
-        <Mision_Vision/>
+        <Mision_Vision />
       </section>
 
       {/* Director del Semillero */}
       <section className="w-full flex flex-col md:flex-row items-stretch justify-between px-6 md:px-20 py-6 bg-[#f5d476] gap-4">
         <div className="w-full md:w-2/3 flex flex-col justify-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-1">
-          Director del semillero
-        </h2>
-        <p className="text-xl text-gray-700 font-semibold">
-          Edmundo Arturo Junco Orduz
-        </p>
-        <p className="text-lg text-gray-700 mb-2">
-          Docente UPTC
-        </p>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-1">
+            Director del semillero
+          </h2>
+          <p className="text-xl text-gray-700 font-semibold">
+            Edmundo Arturo Junco Orduz
+          </p>
+          <p className="text-lg text-gray-700 mb-2">
+            Docente UPTC
+          </p>
 
           <a
             href="https://www.grupogalash.com/researchers/junco"
@@ -138,7 +139,7 @@ const AboutUs = () => {
       {/* Desarrolladores */}
       <div className="flex flex-col gap-6 p-8 mt-12 bg-slate-100 rounded-xl w-full">
         {/* Fila superior: texto centrado y selector a la derecha */}
-        <div className="flex flex-col gap-8 pt-12 px-4 items-center">     
+        <div className="flex flex-col gap-8 pt-12 px-4 items-center">
           <div className="w-full text-center">
             <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 pb-4">
               Desarrolladores
@@ -157,11 +158,12 @@ const AboutUs = () => {
               id="version"
               value={version}
               onChange={(e) => setVersion(e.target.value)}
-              className="px-4 py-2 rounded border border-gray-300"
+              className="w-40 text-center px-4 py-2 rounded-xl border border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-sm hover:border-gray-400 transition duration-150 ease-in-out"
             >
-              <option value="V1">V1 -</option>
-              <option value="V2">V2 -</option>
+              <option value="V1">V1 (2022)</option>
+              <option value="V2">V2 (2025)</option>
             </select>
+
           </div>
         </div>
 
