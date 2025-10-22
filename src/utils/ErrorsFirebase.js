@@ -9,7 +9,7 @@ export const ErrorsFirebase = (codeError) => {
 		case "auth/invalid-email":
 			return {
 				code: "email",
-				message: "El correo no es valido",
+				message: "La contraseña y/o el correo es incorrecta",
 			};
 		case "auth/weak-password":
 			return {

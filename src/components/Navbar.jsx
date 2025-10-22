@@ -46,6 +46,7 @@ const Navbar = () => {
     // Función para cerrar sesión
     const handleLogout = async () => {
         try {
+            alert("Sesión cerrada");
             await logoutUser();
             navigate("/login");
         } catch (error) {

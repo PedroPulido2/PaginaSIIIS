@@ -11,7 +11,7 @@ export const FormValidate = () => {
 		},
 		patternEmail: {
 			value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-			message: "El email no es válido.",
+			message: "La contraseña y/o el correo es incorrecta",
 		},
 		setValues: (value) => value.trim(),
 		patternPassword: {

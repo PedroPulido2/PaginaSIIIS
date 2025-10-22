@@ -121,8 +121,8 @@ const Register = () => {
 						{...register("phone", {
 							required: "El número de celular es obligatorio",
 							pattern: {
-								value: /^[0-9]{10,}$/,
-								message: "El número debe tener al menos 10 dígitos y solo contener números",
+                                value: /^(?:[0-9]{7}|[0-9]{10})$/,
+                                message: "El número debe tener 7 o 10 dígitos, y solo contener números",
 							},
 						})}
 					>
