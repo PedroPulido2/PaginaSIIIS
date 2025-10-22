@@ -20,6 +20,7 @@ const Login = () => {
         handleSubmit,
         formState: { errors },
         setError,
+        clearErrors,
     } = useForm();
 
     // 🔒 Estado para controlar si ya mostramos el alert
@@ -65,8 +66,21 @@ const Login = () => {
                     message: "Has superado el límite de intentos. Intente de nuevo en 5 minutos.",
                 });
             } else {
+                // Errores de credenciales: siempre mostrar el mismo mensaje bajo 'password'
+                const credErrorCodes = [
+                    "auth/invalid-email",
+                    "auth/wrong-password",
+                    "auth/user-not-found",
+                ];
+
                 const { code, message } = ErrorsFirebase(error.code);
-                setError(code, { message });
+
+                if (credErrorCodes.includes(error.code) || message === "La contraseña y/o el correo es incorrecta") {
+                    const credMsg = "La contraseña y/o el correo es incorrecta";
+                    setError("password", { message: credMsg });
+                } else {
+                    setError(code, { message });
+                }
             }
         }
     };
@@ -96,7 +110,11 @@ const Login = () => {
                             htmlFor="email-address"
                             name="floating_email"
                             error={errors.email}
-                            {...register("email", { required, pattern: patternEmail })}
+                            {...register("email", {
+                                required,
+                                pattern: patternEmail,
+                                onChange: () => clearErrors(["password", "firebase"]),
+                            })}
                         >
                             <FormErrors error={errors.email} />
                         </FormInput>
@@ -111,6 +129,7 @@ const Login = () => {
                             {...register("password", {
                                 required,
                                 validate: validateEmptyField,
+                                onChange: () => clearErrors(["password", "firebase"]),
                             })}
                         >
                             <FormErrors error={errors.password} />
