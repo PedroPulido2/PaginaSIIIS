@@ -20,7 +20,6 @@ const Login = () => {
         handleSubmit,
         formState: { errors },
         setError,
-        clearErrors,
     } = useForm();
 
     // 🔒 Estado para controlar si ya mostramos el alert
@@ -67,22 +66,7 @@ const Login = () => {
                 });
             } else {
                 const { code, message } = ErrorsFirebase(error.code);
-
-                // Para errores relacionados con credenciales mostrar siempre el mismo mensaje
-                const credErrorCodes = [
-                    "auth/invalid-email",
-                    "auth/wrong-password",
-                    "auth/user-not-found",
-                ];
-
-                if (credErrorCodes.includes(error.code) || message === "La contraseña y/o el correo es incorrecta") {
-                    const credMsg = "La contraseña y/o el correo es incorrecta";
-                    setError("email", { message: credMsg });
-                    setError("password", { message: credMsg });
-                } else {
-                    // Para otros errores, conservar el comportamiento original
-                    setError(code, { message });
-                }
+                setError(code, { message });
             }
         }
     };
@@ -112,11 +96,7 @@ const Login = () => {
                             htmlFor="email-address"
                             name="floating_email"
                             error={errors.email}
-                            {...register("email", {
-                                required,
-                                pattern: patternEmail,
-                                onChange: () => clearErrors(["email", "password", "firebase"]),
-                            })}
+                            {...register("email", { required, pattern: patternEmail })}
                         >
                             <FormErrors error={errors.email} />
                         </FormInput>
@@ -131,7 +111,6 @@ const Login = () => {
                             {...register("password", {
                                 required,
                                 validate: validateEmptyField,
-                                onChange: () => clearErrors(["email", "password", "firebase"]),
                             })}
                         >
                             <FormErrors error={errors.password} />
