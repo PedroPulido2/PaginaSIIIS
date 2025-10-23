@@ -25,6 +25,8 @@ const Login = () => {
 
     // 🔒 Estado para controlar si ya mostramos el alert
     const [alertShown, setAlertShown] = useState(false);
+    // Estado para mostrar/ocultar la contraseña
+    const [showPassword, setShowPassword] = useState(false);
 
     // useEffect para mostrar el alert solo una vez
     useEffect(() => {
@@ -132,6 +134,8 @@ const Login = () => {
                             htmlFor="password"
                             name="floating_password"
                             error={errors.password}
+                            showPassword={showPassword}
+                            onTogglePassword={() => setShowPassword((v) => !v)}
                             {...register("password", {
                                 required,
                                 validate: validateEmptyField,
