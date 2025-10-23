@@ -111,8 +111,14 @@ const Login = () => {
                             name="floating_email"
                             error={errors.email}
                             {...register("email", {
-                                required,
-                                pattern: patternEmail,
+                                required: {
+                                    value: true,
+                                    message: "Este campo es requerido",
+                                },
+                                pattern: {
+                                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                                    message: "Formato de correo inválido",
+                                },
                                 onChange: () => clearErrors(["password", "firebase"]),
                             })}
                         >

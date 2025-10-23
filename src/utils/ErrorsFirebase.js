@@ -24,7 +24,7 @@ export const ErrorsFirebase = (codeError) => {
 		case "auth/user-not-found":
 			return {
 				code: "email",
-				message: "El usuario no existe",
+				message: "Este correo no se encuentra registrado",
 			};
 		case "auth/user-disabled":
 			return {
